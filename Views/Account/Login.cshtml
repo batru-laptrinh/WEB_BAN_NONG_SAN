@@ -1,0 +1,105 @@
+
+@model WEB_BAN_NONG_SAN.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Đăng nhập";
+    var returnUrl = ViewData["ReturnUrl"] as string;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-5">
+
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4 p-md-5">
+
+                    <h2 class="text-center text-success fw-bold mb-2">
+                        Đăng nhập
+                    </h2>
+
+                    <p class="text-center text-muted mb-4">
+                        Chào mừng bạn quay lại Nông Sản Sạch!
+                    </p>
+
+                    <form asp-controller="Account"
+                          asp-action="Login"
+                          asp-route-returnUrl="@returnUrl"
+                          method="post">
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3"></div>
+
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label asp-for="Email"
+                                   class="form-label fw-semibold">
+                                Email
+                            </label>
+
+                            <input asp-for="Email"
+                                   class="form-control"
+                                   placeholder="Nhập email"
+                                   autocomplete="username" />
+
+                            <span asp-validation-for="Email"
+                                  class="text-danger small"></span>
+                        </div>
+
+                        <!-- Mật khẩu -->
+                        <div class="mb-3">
+                            <label asp-for="Password"
+                                   class="form-label fw-semibold">
+                                Mật khẩu
+                            </label>
+
+                            <input asp-for="Password"
+                                   class="form-control"
+                                   placeholder="Nhập mật khẩu"
+                                   autocomplete="current-password" />
+
+                            <span asp-validation-for="Password"
+                                  class="text-danger small"></span>
+                        </div>
+
+                        <!-- Ghi nhớ đăng nhập -->
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input asp-for="RememberMe"
+                                       class="form-check-input" />
+
+                                <label asp-for="RememberMe"
+                                       class="form-check-label">
+                                    Ghi nhớ đăng nhập
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Nút đăng nhập -->
+                        <button type="submit"
+                                class="btn btn-success w-100 py-2 fw-semibold">
+                            Đăng nhập
+                        </button>
+
+                    </form>
+
+                    <hr class="my-4" />
+
+                    <p class="text-center mb-0">
+                        Chưa có tài khoản?
+                        <a asp-controller="Account"
+                           asp-action="Register"
+                           class="text-success fw-semibold">
+                            Đăng ký ngay
+                        </a>
+                    </p>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

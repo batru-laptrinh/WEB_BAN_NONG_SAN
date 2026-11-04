@@ -1,0 +1,45 @@
+
+@using Microsoft.AspNetCore.Identity
+@using WEB_BAN_NONG_SAN.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <div class="d-flex align-items-center gap-3">
+
+        <span class="text-dark">
+            Xin chào, @User.Identity?.Name
+        </span>
+
+        <form action="@Url.Action("Logout", "Account")"
+              method="post"
+              class="d-inline">
+
+            @Html.AntiForgeryToken()
+
+            <button type="submit"
+                    class="btn btn-outline-danger btn-sm">
+                Đăng xuất
+            </button>
+
+        </form>
+
+    </div>
+}
+else
+{
+    <div class="d-flex align-items-center gap-2">
+
+        <a href="@Url.Action("Login", "Account")"
+           class="btn btn-outline-success btn-sm">
+            Đăng nhập
+        </a>
+
+        <a href="@Url.Action("Register", "Account")"
+           class="btn btn-success btn-sm">
+            Đăng ký
+        </a>
+
+    </div>
+}
