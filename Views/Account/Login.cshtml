@@ -37,6 +37,7 @@
                             </label>
 
                             <input asp-for="Email"
+                                   type="email"
                                    class="form-control"
                                    placeholder="Nhập email"
                                    autocomplete="username" />
@@ -53,6 +54,7 @@
                             </label>
 
                             <input asp-for="Password"
+                                   type="password"
                                    class="form-control"
                                    placeholder="Nhập mật khẩu"
                                    autocomplete="current-password" />
@@ -61,16 +63,28 @@
                                   class="text-danger small"></span>
                         </div>
 
-                        <!-- Ghi nhớ đăng nhập -->
+                        <!-- Ghi nhớ đăng nhập và quên mật khẩu -->
                         <div class="mb-4">
-                            <div class="form-check">
-                                <input asp-for="RememberMe"
-                                       class="form-check-input" />
+                            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
 
-                                <label asp-for="RememberMe"
-                                       class="form-check-label">
-                                    Ghi nhớ đăng nhập
-                                </label>
+                                <!-- Ghi nhớ đăng nhập -->
+                                <div class="form-check">
+                                    <input asp-for="RememberMe"
+                                           class="form-check-input" />
+
+                                    <label asp-for="RememberMe"
+                                           class="form-check-label">
+                                        Ghi nhớ đăng nhập
+                                    </label>
+                                </div>
+
+                                <!-- Quên mật khẩu -->
+                                <a asp-controller="Account"
+                                   asp-action="ForgotPassword"
+                                   class="text-success text-decoration-none fw-semibold">
+                                    Quên mật khẩu?
+                                </a>
+
                             </div>
                         </div>
 
@@ -84,6 +98,7 @@
 
                     <hr class="my-4" />
 
+                    <!-- Liên kết đăng ký -->
                     <p class="text-center mb-0">
                         Chưa có tài khoản?
                         <a asp-controller="Account"

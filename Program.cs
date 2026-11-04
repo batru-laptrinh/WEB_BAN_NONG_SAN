@@ -1,4 +1,4 @@
-
+using WEB_BAN_NONG_SAN.Services.Email;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WEB_BAN_NONG_SAN.Data;
@@ -7,6 +7,7 @@ using WEB_BAN_NONG_SAN.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 
 var connectionString = builder.Configuration
     .GetConnectionString("DefaultConnection")
