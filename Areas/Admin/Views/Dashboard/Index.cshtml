@@ -1,0 +1,71 @@
+@model AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Tổng quan quản trị";
+    var checkedAt = Model.CheckedAtUtc.ToOffset(TimeSpan.FromHours(7));
+}
+<div class="admin-dashboard">
+    <section class="admin-page-heading" aria-labelledby="dashboard-title">
+        <div>
+            <p class="admin-eyebrow">GÓC NHÌN TỔNG THỂ</p>
+            <h1 id="dashboard-title">Tổng quan quản trị</h1>
+            <p class="admin-page-description">Theo dõi tài khoản và trạng thái các chức năng của website.</p>
+        </div>
+        <div class="admin-updated-at">
+            <svg class="admin-icon" aria-hidden="true"><use href="#admin-clock"></use></svg>
+            <span>Lần kiểm tra này<time datetime="@Model.CheckedAtUtc.ToString("O")">@checkedAt.ToString("HH:mm · dd/MM/yyyy") <small>UTC+7</small></time></span>
+        </div>
+    </section>
+
+    <div class="admin-overview-grid">
+        <section class="admin-customer-card" aria-labelledby="customer-card-title">
+            <div class="admin-customer-heading"><span class="admin-customer-icon"><svg class="admin-icon" aria-hidden="true"><use href="#admin-users"></use></svg></span><span class="admin-card-kicker">TÀI KHOẢN</span></div>
+            <h2 id="customer-card-title">Tài khoản Customer</h2>
+            @if (Model.IsDataAvailable)
+            {
+                <strong class="admin-customer-count" data-testid="customer-count">@Model.CustomerCount!.Value.ToString("N0", CultureInfo.GetCultureInfo("vi-VN"))</strong>
+                <p class="admin-customer-caption">Tài khoản có vai trò Customer trong hệ thống.</p>
+                <div class="admin-customer-source"><span class="admin-status-dot" aria-hidden="true"></span>Dữ liệu tài khoản hiện tại</div>
+            }
+            else
+            {
+                <strong class="admin-count-unavailable" data-testid="customer-count">Chưa tải được</strong>
+                <p class="admin-customer-caption">Tạm thời chưa đọc được số tài khoản. Vui lòng tải lại trang sau.</p>
+                <div class="admin-customer-source"><svg class="admin-icon" aria-hidden="true"><use href="#admin-alert"></use></svg>Dữ liệu đang không khả dụng</div>
+            }
+            <p class="admin-count-note">Bao gồm quản trị viên đang có thêm vai trò Customer.</p>
+            <svg class="admin-customer-decoration" aria-hidden="true"><use href="#admin-leaf"></use></svg>
+        </section>
+
+        <section class="admin-panel admin-system-panel" aria-labelledby="system-title">
+            <div class="admin-panel-heading"><div><p class="admin-eyebrow">TRẠNG THÁI</p><h2 id="system-title">Hoạt động hệ thống</h2></div><span class="admin-soft-icon"><svg class="admin-icon" aria-hidden="true"><use href="#admin-shield"></use></svg></span></div>
+            <ul class="admin-system-list">
+                <li><span class="admin-system-label"><svg class="admin-icon" aria-hidden="true"><use href="#admin-user"></use></svg>Tài khoản quản trị</span><span class="admin-state-pill">Đã đăng nhập</span></li>
+                <li><span class="admin-system-label"><svg class="admin-icon" aria-hidden="true"><use href="#admin-lock"></use></svg>Quyền truy cập</span><span class="admin-state-pill">Admin</span></li>
+                <li><span class="admin-system-label"><svg class="admin-icon" aria-hidden="true"><use href="#admin-users"></use></svg>Dữ liệu tài khoản</span><span class="admin-state-pill @(Model.IsDataAvailable ? "" : "is-unavailable")">@(Model.IsDataAvailable ? "Đã đọc dữ liệu" : "Chưa khả dụng")</span></li>
+            </ul>
+            <p class="admin-system-note"><svg class="admin-icon" aria-hidden="true"><use href="#admin-check"></use></svg>Quyền quản trị được kiểm tra khi truy cập.</p>
+        </section>
+    </div>
+
+    <section class="admin-quick-section" aria-labelledby="quick-title">
+        <div class="admin-section-heading"><div><p class="admin-eyebrow">THAO TÁC THƯỜNG DÙNG</p><h2 id="quick-title">Quản lý nhanh</h2></div><span class="admin-section-caption">Các chức năng hiện có</span></div>
+        <div class="admin-quick-grid">
+            <a asp-area="" asp-controller="Profile" asp-action="Index" class="admin-quick-card"><span class="admin-quick-icon"><svg class="admin-icon" aria-hidden="true"><use href="#admin-user"></use></svg></span><span><strong>Hồ sơ tài khoản</strong><small>Xem và cập nhật thông tin cá nhân.</small></span><svg class="admin-icon admin-quick-arrow" aria-hidden="true"><use href="#admin-arrow"></use></svg></a>
+            <a asp-area="" asp-controller="Account" asp-action="ChangePassword" class="admin-quick-card"><span class="admin-quick-icon"><svg class="admin-icon" aria-hidden="true"><use href="#admin-lock"></use></svg></span><span><strong>Đổi mật khẩu</strong><small>Quản lý bảo mật tài khoản của bạn.</small></span><svg class="admin-icon admin-quick-arrow" aria-hidden="true"><use href="#admin-arrow"></use></svg></a>
+            <a asp-area="" asp-controller="Home" asp-action="Index" class="admin-quick-card"><span class="admin-quick-icon"><svg class="admin-icon" aria-hidden="true"><use href="#admin-home"></use></svg></span><span><strong>Trở về website</strong><small>Truy cập giao diện dành cho khách hàng.</small></span><svg class="admin-icon admin-quick-arrow" aria-hidden="true"><use href="#admin-arrow"></use></svg></a>
+        </div>
+    </section>
+
+    <section class="admin-panel admin-business-panel" aria-labelledby="business-title">
+        <div class="admin-panel-heading"><div><p class="admin-eyebrow">KINH DOANH</p><h2 id="business-title">Sản phẩm, đơn hàng &amp; báo cáo</h2></div><span class="admin-pending-badge">Chưa triển khai</span></div>
+        <div class="admin-empty-report">
+            <div class="admin-report-illustration" aria-hidden="true"><svg class="admin-icon"><use href="#admin-file"></use></svg><span><svg class="admin-icon"><use href="#admin-leaf"></use></svg></span></div>
+            <div><h3>Không gian cho những bước phát triển tiếp theo</h3><p>Các chức năng bán hàng chưa được triển khai. Dữ liệu sản phẩm, đơn hàng và doanh thu sẽ được hiển thị khi các chức năng này sẵn sàng.</p></div>
+        </div>
+        <div class="admin-module-grid">
+            <div class="admin-module-item"><svg class="admin-icon" aria-hidden="true"><use href="#admin-box"></use></svg><span><strong>Sản phẩm &amp; kho hàng</strong><small>Chưa triển khai</small></span></div>
+            <div class="admin-module-item"><svg class="admin-icon" aria-hidden="true"><use href="#admin-bag"></use></svg><span><strong>Đơn hàng</strong><small>Chưa triển khai</small></span></div>
+            <div class="admin-module-item"><svg class="admin-icon" aria-hidden="true"><use href="#admin-chart"></use></svg><span><strong>Doanh thu &amp; báo cáo</strong><small>Chưa có dữ liệu</small></span></div>
+        </div>
+    </section>
+</div>

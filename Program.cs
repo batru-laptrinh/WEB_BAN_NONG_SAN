@@ -64,6 +64,12 @@ app.UseAuthorization();
 
 app.MapStaticAssets();
 
+app.MapAreaControllerRoute(
+    name: "admin",
+    areaName: "Admin",
+    pattern: "Admin/{controller}/{action=Index}/{id?}")
+    .WithStaticAssets();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
@@ -75,3 +81,6 @@ using (var scope = app.Services.CreateScope())
         scope.ServiceProvider);
 }
 app.Run();
+
+// Allows integration tests to host the real MVC pipeline with an isolated database.
+public partial class Program { }

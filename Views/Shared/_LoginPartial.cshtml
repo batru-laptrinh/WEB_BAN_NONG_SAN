@@ -6,11 +6,17 @@
 
 @if (SignInManager.IsSignedIn(User))
 {
-    <div class="d-flex align-items-center gap-3">
+    <div class="d-flex align-items-center flex-wrap gap-3">
 
         <span class="text-dark">
             Xin chào, @User.Identity?.Name
         </span>
+
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index"
+               class="btn btn-outline-secondary btn-sm">Trang quản trị</a>
+        }
 
         <form action="@Url.Action("Logout", "Account")"
               method="post"

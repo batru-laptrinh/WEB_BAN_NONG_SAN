@@ -1,0 +1,99 @@
+@{
+    var adminName = User.Identity?.Name ?? "Quản trị viên";
+    var upcomingItems = new[]
+    {
+        (Icon: "users", Label: "Quản lý khách hàng"),
+        (Icon: "folder", Label: "Quản lý danh mục"),
+        (Icon: "box", Label: "Quản lý sản phẩm"),
+        (Icon: "warehouse", Label: "Quản lý kho hàng"),
+        (Icon: "bag", Label: "Quản lý đơn hàng"),
+        (Icon: "tag", Label: "Quản lý mã giảm giá"),
+        (Icon: "chart", Label: "Thống kê và báo cáo"),
+        (Icon: "settings", Label: "Cài đặt")
+    };
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] · Quản trị WEB_BAN_NONG_SAN</title>
+    <link rel="icon" href="~/favicon.ico" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+</head>
+<body class="admin-body">
+    <a class="admin-skip-link" href="#admin-main">Đến nội dung chính</a>
+    <partial name="_AdminIcons" />
+    <div class="admin-shell">
+        <aside class="offcanvas-lg offcanvas-start admin-sidebar" tabindex="-1" id="admin-sidebar" aria-labelledby="admin-sidebar-title">
+            <div class="admin-brand-row">
+                <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="admin-brand" aria-label="Nông sản — Tổng quan quản trị">
+                    <span class="admin-brand-mark"><svg class="admin-icon" aria-hidden="true"><use href="#admin-leaf"></use></svg></span>
+                    <span><span class="admin-brand-name" id="admin-sidebar-title">NÔNG SẢN</span><span class="admin-brand-caption">K H U &nbsp; Q U Ả N &nbsp; T R Ị</span></span>
+                </a>
+                <button type="button" class="btn-close d-lg-none" data-bs-dismiss="offcanvas" data-bs-target="#admin-sidebar" aria-label="Đóng menu quản trị"></button>
+            </div>
+            <div class="offcanvas-body">
+                <p class="admin-nav-heading">KHÔNG GIAN LÀM VIỆC</p>
+                <nav aria-label="Menu quản trị" class="admin-nav">
+                    <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="admin-nav-item is-active" aria-current="page">
+                        <svg class="admin-icon" aria-hidden="true"><use href="#admin-grid"></use></svg>
+                        <span>Tổng quan</span>
+                        <span class="admin-current-dot" aria-hidden="true"></span>
+                    </a>
+                    @foreach (var item in upcomingItems)
+                    {
+                        <span class="admin-nav-item is-upcoming" aria-disabled="true">
+                            <svg class="admin-icon" aria-hidden="true"><use href="#admin-@item.Icon"></use></svg>
+                            <span class="admin-nav-label">@item.Label<small>Sắp triển khai</small></span>
+                        </span>
+                    }
+                </nav>
+                <div class="admin-sidebar-bottom">
+                    <div class="admin-sidebar-note">
+                        <svg class="admin-icon" aria-hidden="true"><use href="#admin-shield"></use></svg>
+                        <span><strong>Không gian dành cho Admin</strong><small>Quản lý tập trung, truy cập theo phân quyền.</small></span>
+                    </div>
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="admin-return-link">
+                        <svg class="admin-icon" aria-hidden="true"><use href="#admin-home"></use></svg>
+                        <span>Quay về website</span>
+                        <svg class="admin-icon admin-return-arrow" aria-hidden="true"><use href="#admin-arrow"></use></svg>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <div class="admin-workspace">
+            <header class="admin-topbar">
+                <div class="admin-header-title">
+                    <button type="button" class="admin-icon-button d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#admin-sidebar" aria-controls="admin-sidebar" aria-label="Mở menu quản trị">
+                        <svg class="admin-icon" aria-hidden="true"><use href="#admin-menu"></use></svg>
+                    </button>
+                    <div><span class="admin-site-name">WEB_BAN_NONG_SAN</span><span class="admin-area-name">Khu vực quản trị</span></div>
+                </div>
+                <div class="admin-header-actions">
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="admin-header-home" aria-label="Quay về trang chủ">
+                        <svg class="admin-icon" aria-hidden="true"><use href="#admin-home"></use></svg><span>Về website</span>
+                    </a>
+                    <div class="admin-account">
+                        <span class="admin-avatar"><svg class="admin-icon" aria-hidden="true"><use href="#admin-user"></use></svg></span>
+                        <span class="admin-account-info"><strong title="@adminName">@adminName</strong><small>Quản trị viên</small></span>
+                    </div>
+                    <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" class="admin-logout-form">
+                        <button type="submit" class="admin-icon-button admin-logout-button" aria-label="Đăng xuất" title="Đăng xuất">
+                            <svg class="admin-icon" aria-hidden="true"><use href="#admin-logout"></use></svg><span class="admin-logout-label">Đăng xuất</span>
+                        </button>
+                    </form>
+                </div>
+            </header>
+            <main id="admin-main" class="admin-main" tabindex="-1">
+                @RenderBody()
+            </main>
+            <footer class="admin-footer"><span>WEB_BAN_NONG_SAN</span><span>Chăm chút từ nông sản đến trải nghiệm.</span></footer>
+        </div>
+    </div>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
