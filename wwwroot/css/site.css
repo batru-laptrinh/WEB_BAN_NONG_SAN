@@ -1,31 +1,105 @@
-html {
-  font-size: 14px;
+:root {
+    --agri-primary: #2e7d32;
+    --agri-secondary: #4caf50;
+    --agri-light: #e8f5e9;
+    --agri-dark: #1b5e20;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+html, body {
+    height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f6f9f6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+main {
+    flex: 1;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+/* Header & Navbar */
+.navbar-agri {
+    background: linear-gradient(90deg, #1b5e20 0%, #2e7d32 100%);
+}
+
+.navbar-agri .nav-link,
+.navbar-agri .navbar-brand {
+    color: #ffffff !important;
+}
+
+.navbar-agri .nav-link:hover {
+    color: #ffd54f !important;
+}
+
+/* Banner Quảng Cáo */
+.hero-banner {
+    background: linear-gradient(120deg, rgba(27, 94, 32, 0.9), rgba(67, 160, 71, 0.85)),
+                url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
+    color: #fff;
+    border-radius: 18px;
+    padding: 3.5rem 2.5rem;
+}
+
+/* Thẻ Danh Mục Nổi Bật */
+.category-card {
+    background-color: #ffffff;
+    border: 1px solid #c8e6c9;
+    border-radius: 14px;
+    padding: 1.25rem 0.75rem;
+    text-align: center;
+    color: var(--agri-dark);
+    text-decoration: none;
+    transition: all 0.25s ease;
+    display: block;
+    font-weight: 600;
+}
+
+.category-card:hover {
+    background-color: var(--agri-primary);
+    color: #ffffff;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(46, 125, 50, 0.2);
+}
+
+/* Thẻ Sản Phẩm */
+.product-card {
+    border: 1px solid #e2ece2;
+    border-radius: 14px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    background: #ffffff;
+    overflow: hidden;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(46, 125, 50, 0.14);
+}
+
+.product-img-wrapper {
+    height: 200px;
+    overflow: hidden;
+    background-color: #f1f5f1;
+    position: relative;
+}
+
+.product-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+}
+
+.product-card:hover .product-img-wrapper img {
+    transform: scale(1.06);
+}
+
+/* Footer */
+.footer-agri {
+    background-color: #163018;
+    color: #dcedc8;
 }
