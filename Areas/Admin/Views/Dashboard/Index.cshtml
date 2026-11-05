@@ -8,7 +8,7 @@
         <div>
             <p class="admin-eyebrow">GÓC NHÌN TỔNG THỂ</p>
             <h1 id="dashboard-title">Tổng quan quản trị</h1>
-            <p class="admin-page-description">Theo dõi tài khoản và trạng thái các chức năng của website.</p>
+            <p class="admin-page-description">Theo dõi tài khoản, đơn hàng và kết quả kinh doanh từ dữ liệu hiện tại.</p>
         </div>
         <div class="admin-updated-at">
             <svg class="admin-icon" aria-hidden="true"><use href="#admin-clock"></use></svg>
@@ -57,15 +57,22 @@
     </section>
 
     <section class="admin-panel admin-business-panel" aria-labelledby="business-title">
-        <div class="admin-panel-heading"><div><p class="admin-eyebrow">KINH DOANH</p><h2 id="business-title">Sản phẩm, đơn hàng &amp; báo cáo</h2></div><span class="admin-pending-badge">Chưa triển khai</span></div>
-        <div class="admin-empty-report">
-            <div class="admin-report-illustration" aria-hidden="true"><svg class="admin-icon"><use href="#admin-file"></use></svg><span><svg class="admin-icon"><use href="#admin-leaf"></use></svg></span></div>
-            <div><h3>Không gian cho những bước phát triển tiếp theo</h3><p>Các chức năng bán hàng chưa được triển khai. Dữ liệu sản phẩm, đơn hàng và doanh thu sẽ được hiển thị khi các chức năng này sẵn sàng.</p></div>
-        </div>
-        <div class="admin-module-grid">
-            <div class="admin-module-item"><svg class="admin-icon" aria-hidden="true"><use href="#admin-box"></use></svg><span><strong>Sản phẩm &amp; kho hàng</strong><small>Chưa triển khai</small></span></div>
-            <div class="admin-module-item"><svg class="admin-icon" aria-hidden="true"><use href="#admin-bag"></use></svg><span><strong>Đơn hàng</strong><small>Chưa triển khai</small></span></div>
-            <div class="admin-module-item"><svg class="admin-icon" aria-hidden="true"><use href="#admin-chart"></use></svg><span><strong>Doanh thu &amp; báo cáo</strong><small>Chưa có dữ liệu</small></span></div>
-        </div>
+        <div class="admin-panel-heading"><div><p class="admin-eyebrow">KINH DOANH</p><h2 id="business-title">Sản phẩm, đơn hàng &amp; doanh thu</h2></div><a asp-area="Admin" asp-controller="Reports" asp-action="Index" class="btn btn-outline-primary">Xem báo cáo</a></div>
+        @if (Model.ProductCount.HasValue)
+        {
+            <div class="commerce-stats">
+                <div><small>Sản phẩm trong hệ thống</small><strong data-testid="product-count">@Model.ProductCount</strong></div>
+                <div><small>Tổng đơn hàng</small><strong data-testid="order-count">@Model.OrderCount</strong></div>
+                <div><small>Đơn chờ xác nhận</small><strong>@Model.PendingOrderCount</strong></div>
+                <div><small>Đơn hoàn thành</small><strong>@Model.CompletedOrderCount</strong></div>
+                <div><small>Doanh thu COD đã hoàn thành</small><strong data-testid="completed-revenue">@Model.CompletedRevenue?.ToString("#,##0.##", CultureInfo.GetCultureInfo("vi-VN")) ₫</strong></div>
+            </div>
+            @if (Model.OrderCount == 0) { <p class="text-muted">Chưa có đơn hàng. Thống kê hiển thị dữ liệu hiện tại.</p> }
+            <p class="text-muted small">Doanh thu gồm tổng tiền các đơn hoàn thành và đã thu COD, bao gồm phí giao hàng sau giảm giá.</p>
+        }
+        else
+        {
+            <p role="status">Chưa tải được thống kê bán hàng. Hãy kiểm tra Migration và thử lại sau.</p>
+        }
     </section>
 </div>

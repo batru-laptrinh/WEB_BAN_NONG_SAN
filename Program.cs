@@ -5,6 +5,7 @@ using WEB_BAN_NONG_SAN.Data;
 using WEB_BAN_NONG_SAN.Models;
 using WEB_BAN_NONG_SAN.Tools;
 using WEB_BAN_NONG_SAN.Services.Admin;
+using WEB_BAN_NONG_SAN.Services;
 
 if (FirstAdminCommand.IsRequested(args))
 {
@@ -17,6 +18,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 builder.Services.AddScoped<AdminUserService>();
+builder.Services.AddScoped<ShippingAddressService>();
+builder.Services.AddScoped<ProductImageService>();
+builder.Services.AddScoped<CheckoutService>();
+builder.Services.AddScoped<OrderService>();
 
 var connectionString = builder.Configuration
     .GetConnectionString("DefaultConnection")
@@ -53,9 +58,26 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = "/Account/Login";
     options.AccessDeniedPath = "/Account/AccessDenied";
     options.Cookie.HttpOnly = true;
+    if (!builder.Environment.IsDevelopment())
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
+
+builder.Services.AddAntiforgery(options =>
+{
+    if (!builder.Environment.IsDevelopment())
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 
 var app = builder.Build();
+
+app.Use(async (context, next) =>
+{
+    context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+    context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+    context.Response.Headers["X-Frame-Options"] = "DENY";
+    context.Response.Headers["Content-Security-Policy"] = "frame-ancestors 'none'; object-src 'none'; base-uri 'self'";
+    await next(context);
+});
 
 if (!app.Environment.IsDevelopment())
 {

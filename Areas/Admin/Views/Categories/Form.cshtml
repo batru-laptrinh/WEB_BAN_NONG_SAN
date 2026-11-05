@@ -1,0 +1,16 @@
+@model CatalogAdminCategoryForm
+@{ var editing = Model.Id > 0; ViewData["Title"] = editing ? "Chỉnh sửa danh mục" : "Thêm danh mục"; }
+<div class="commerce admin-users">
+    <div class="admin-page-heading"><div><p class="admin-eyebrow">DANH MỤC NÔNG SẢN</p><h1>@ViewData["Title"]</h1><p class="admin-page-description">Tên và trạng thái danh mục được sử dụng trong danh sách sản phẩm.</p></div></div>
+    <section class="admin-users-directory p-4">
+        <form asp-action="@(editing ? "Edit" : "Create")" asp-route-id="@(editing ? Model.Id : (int?)null)" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            @if (editing) { <input asp-for="Version" type="hidden" /> }
+            <div class="mb-3"><label asp-for="Name" class="form-label"></label><input asp-for="Name" class="form-control" maxlength="100" /><span asp-validation-for="Name" class="text-danger"></span></div>
+            <div class="mb-3"><label asp-for="Description" class="form-label"></label><textarea asp-for="Description" class="form-control" rows="4" maxlength="1000"></textarea><span asp-validation-for="Description" class="text-danger"></span></div>
+            <div class="form-check mb-3"><input asp-for="IsActive" class="form-check-input" /><label asp-for="IsActive" class="form-check-label"></label></div>
+            <p class="text-muted">Khi ngừng sử dụng danh mục, sản phẩm trong danh mục sẽ không được hiển thị hoặc đặt mua mới. Dữ liệu và lịch sử đơn hàng vẫn được giữ.</p>
+            <div class="d-flex flex-wrap gap-2"><button class="admin-users-button is-primary">Lưu danh mục</button><a asp-action="Index" class="admin-users-button is-secondary">Quay lại</a></div>
+        </form>
+    </section>
+</div>

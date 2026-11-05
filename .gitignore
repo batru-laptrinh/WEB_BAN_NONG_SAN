@@ -5,3 +5,11 @@ obj/
 *.suo
 .env
 appsettings.Development.json
+App_Data/product-images/
+*.db
+*.db-shm
+*.db-wal
+*.bak
+TestResults/
+*.mdf
+*.ldf

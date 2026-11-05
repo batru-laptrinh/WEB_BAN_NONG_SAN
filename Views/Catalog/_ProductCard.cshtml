@@ -1,0 +1,9 @@
+@model WEB_BAN_NONG_SAN.ViewModels.CatalogProductCard
+@using System.Globalization
+<article class="store-product-card" data-product-id="@Model.Id">
+    <a class="store-product-picture" asp-controller="Catalog" asp-action="Details" asp-route-id="@Model.Id" aria-label="Xem @Model.Name">
+        <img src="@(string.IsNullOrEmpty(Model.ImagePath) ? Url.Content("~/images/product-placeholder.svg") : Model.ImagePath)" alt="@(string.IsNullOrEmpty(Model.ImagePath) ? "Chưa có ảnh sản phẩm" : Model.Name)" loading="lazy" width="400" height="320" />
+        @if (Model.Stock <= 0) {<span class="store-stock-badge">Tạm hết hàng</span>}
+    </a>
+    <div class="store-product-content"><p class="store-product-category">@Model.CategoryName</p><h3><a asp-controller="Catalog" asp-action="Details" asp-route-id="@Model.Id">@Model.Name</a></h3><p class="store-product-price">@Model.Price.ToString("#,0.##", CultureInfo.GetCultureInfo("vi-VN")) <span>₫ / @Model.Unit</span></p><div class="store-product-bottom"><span>@(Model.Stock > 0 ? "Còn hàng" : "Chưa thể đặt mua")</span><a asp-controller="Catalog" asp-action="Details" asp-route-id="@Model.Id" aria-label="Xem chi tiết @Model.Name">Chi tiết <span aria-hidden="true">→</span></a></div></div>
+</article>

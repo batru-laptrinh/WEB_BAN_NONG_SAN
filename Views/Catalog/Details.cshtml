@@ -1,0 +1,20 @@
+@model WEB_BAN_NONG_SAN.ViewModels.CatalogDetailsViewModel
+@using System.Globalization
+@{ ViewData["Title"] = Model.Product.Name; }
+<nav class="store-breadcrumb" aria-label="Đường dẫn"><a asp-controller="Home" asp-action="Index">Trang chủ</a><span aria-hidden="true">/</span><a asp-action="Index">Cửa hàng</a><span aria-hidden="true">/</span><span>@Model.Product.Name</span></nav>
+<article class="store-product-detail">
+    <div class="store-detail-picture"><img src="@(string.IsNullOrEmpty(Model.Product.ImagePath) ? Url.Content("~/images/product-placeholder.svg") : Model.Product.ImagePath)" alt="@(string.IsNullOrEmpty(Model.Product.ImagePath) ? "Chưa có ảnh sản phẩm" : Model.Product.Name)" width="640" height="560" /></div>
+    <div class="store-detail-copy"><p class="store-eyebrow">@Model.Product.CategoryName</p><h1>@Model.Product.Name</h1><p class="store-detail-price">@Model.Product.Price.ToString("#,0.##", CultureInfo.GetCultureInfo("vi-VN")) <span>₫ / @Model.Product.Unit</span></p><p class="store-detail-stock @(Model.Product.Stock <= 0 ? "is-empty" : "")">@(Model.Product.Stock > 0 ? $"Còn {Model.Product.Stock} {Model.Product.Unit}" : "Sản phẩm tạm hết hàng")</p><div class="store-detail-description">@Model.Description</div>
+    @if (Model.Product.Stock > 0)
+    {
+        <form asp-controller="Cart" asp-action="Add" method="post" class="store-buy-form"><input type="hidden" name="productId" value="@Model.Product.Id" /><input type="hidden" name="returnUrl" value="@Url.Action("Details", "Catalog", new { id=Model.Product.Id })" /><label for="product-quantity">Số lượng <small>(@Model.Product.Unit)</small></label><div><input id="product-quantity" name="quantity" type="number" min="1" max="@(Math.Min(Model.Product.Stock, 999))" value="1" required class="form-control" inputmode="numeric" /><button type="submit" class="store-button">Thêm vào giỏ hàng <span aria-hidden="true">+</span></button></div></form>
+        @if (User.Identity?.IsAuthenticated != true){<p class="store-login-note">Bạn cần <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("Details", "Catalog", new { id=Model.Product.Id })">đăng nhập</a> để lưu giỏ hàng và đặt mua.</p>}
+    }
+    else {<p class="store-unavailable-note">Hãy quay lại sau hoặc khám phá những sản phẩm khác đang có tại cửa hàng.</p>}
+    <div class="store-detail-reassurance"><span>✓ Thông tin giá minh bạch</span><span>✓ Thanh toán khi nhận hàng (COD)</span><span>✓ Xác nhận đơn trước khi đặt mua</span></div>
+    </div>
+</article>
+@if (Model.RelatedProducts.Count > 0)
+{
+    <section class="store-section"><div class="store-section-heading"><div><p class="store-eyebrow">THÊM MỘT VÀI LỰA CHỌN</p><h2>Cùng danh mục</h2></div><a asp-action="Index">Khám phá tiếp →</a></div><div class="store-product-grid">@foreach(var product in Model.RelatedProducts){<partial name="_ProductCard" model="product" />}</div></section>
+}

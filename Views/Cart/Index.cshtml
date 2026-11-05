@@ -1,0 +1,41 @@
+@using System.Globalization
+@model WEB_BAN_NONG_SAN.ViewModels.CartViewModel
+@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+<section class="commerce-page">
+    <div class="commerce-heading"><div><p class="eyebrow">MUA SẮM CÙNG NÔNG SẢN</p><h1>Giỏ hàng của bạn</h1><p>Kiểm tra số lượng trước khi chọn địa chỉ và đặt hàng COD.</p></div><a class="btn btn-outline-secondary" asp-controller="Catalog" asp-action="Index">Tiếp tục mua sắm</a></div>
+    @if (TempData["SuccessMessage"] is string success) { <div class="alert alert-success" role="status">@success</div> }
+    @if (TempData["ErrorMessage"] is string error) { <div class="alert alert-warning" role="alert">@error</div> }
+    @if (!Model.IsAvailable)
+    {
+        <div class="alert alert-warning">Chưa tải được giỏ hàng. Vui lòng thử lại sau.</div>
+    }
+    else if (Model.Items.Count == 0)
+    {
+        <div class="commerce-empty"><h2>Giỏ hàng đang trống</h2><p>Khám phá sản phẩm đang bán và chọn những món phù hợp cho gia đình.</p><a class="btn btn-primary" asp-controller="Catalog" asp-action="Index">Xem sản phẩm</a></div>
+    }
+    else
+    {
+        <div class="row g-4"><div class="col-lg-8">
+            @foreach (var item in Model.Items)
+            {
+                <article class="commerce-card mb-3 p-4">
+                    <div class="d-flex flex-wrap justify-content-between gap-3"><div><h2 class="h5">@if (item.IsAvailable) { <a asp-controller="Catalog" asp-action="Details" asp-route-id="@item.ProductId">@item.Name</a> } else { @item.Name }</h2><p>@item.UnitPrice.ToString("N2", CultureInfo.GetCultureInfo("vi-VN")) đ / @item.Unit</p></div><strong>@item.LineTotal.ToString("N2", CultureInfo.GetCultureInfo("vi-VN")) đ</strong></div>
+                    @if (!item.IsAvailable) { <p class="text-danger">Sản phẩm ngừng bán hoặc số lượng vượt tồn kho. Vui lòng điều chỉnh hoặc xóa.</p> }
+                    <div class="d-flex flex-wrap align-items-end gap-3">
+                        <form asp-action="Update" asp-route-id="@item.Id" method="post" class="d-flex align-items-end gap-2">
+                            <input type="hidden" name="MutationToken" value="@item.MutationToken" />
+                            <div><label class="form-label" for="quantity-@item.Id">Số lượng (@item.Unit)</label><input class="form-control" type="number" id="quantity-@item.Id" name="Quantity" value="@item.Quantity" min="1" max="1000" required style="max-width:9rem" /></div>
+                            <button class="btn btn-outline-secondary" type="submit">Cập nhật</button>
+                        </form>
+                        <form asp-action="Remove" asp-route-id="@item.Id" method="post"><input type="hidden" name="mutationToken" value="@item.MutationToken" /><button class="btn btn-outline-danger" type="submit">Xóa</button></form>
+                    </div>
+                </article>
+            }
+        </div><aside class="col-lg-4"><div class="commerce-card p-4"><h2 class="h4">Tạm tính</h2><p class="fs-3 fw-semibold">@Model.Subtotal.ToString("N2", CultureInfo.GetCultureInfo("vi-VN")) đ</p><p>Phí vận chuyển và giảm giá được hiển thị tại bước thanh toán.</p>
+            @if (Model.CanCheckout) { <a class="btn btn-primary w-100" asp-controller="Checkout" asp-action="Index">Tiến hành đặt hàng</a> }
+            else { <p class="alert alert-warning">Vui lòng xử lý các sản phẩm không khả dụng để tiếp tục.</p> }
+        </div></aside></div>
+    }
+</section>

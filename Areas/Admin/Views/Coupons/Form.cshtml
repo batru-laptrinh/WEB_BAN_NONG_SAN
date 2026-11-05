@@ -1,0 +1,43 @@
+@model WEB_BAN_NONG_SAN.ViewModels.CouponFormViewModel
+@{
+    var editing = Model.Id > 0;
+    ViewData["Title"] = editing ? "Chỉnh sửa mã giảm giá" : "Tạo mã giảm giá";
+    var invariant = System.Globalization.CultureInfo.InvariantCulture;
+}
+<a asp-action="Index" class="d-inline-block mb-3">← Danh sách mã giảm giá</a>
+<h1 class="h2 mb-4">@ViewData["Title"]</h1>
+<section class="card border-0 shadow-sm rounded-4 p-3 p-md-4" style="max-width:56rem">
+    @if (Model.HasBeenUsed)
+    {
+        <div class="alert alert-info">Mã đã có lịch sử sử dụng. Điều kiện được giữ nguyên để bảo vệ lịch sử đơn hàng; chỉ được bật/tắt hoặc điều chỉnh tổng lượt. Đã dùng: @Model.UsedCount lượt.</div>
+    }
+    <form asp-action="@(editing ? "Edit" : "Create")" asp-route-id="@(editing ? Model.Id : (int?)null)" method="post">
+        <div asp-validation-summary="All" class="text-danger mb-3" role="alert"></div>
+        @if (editing) { <input asp-for="Version" type="hidden" /> }
+        @if (Model.HasBeenUsed)
+        {
+            <dl class="row"><dt class="col-sm-4">Mã</dt><dd class="col-sm-8">@Model.Code</dd><dt class="col-sm-4">Hình thức</dt><dd class="col-sm-8">@(Model.Kind == WEB_BAN_NONG_SAN.Models.CouponKind.Percentage ? "Phần trăm" : "Số tiền cố định")</dd><dt class="col-sm-4">Giá trị</dt><dd class="col-sm-8">@Model.Value</dd><dt class="col-sm-4">Tiền hàng tối thiểu</dt><dd class="col-sm-8">@Model.MinimumSubtotal đ</dd><dt class="col-sm-4">Thời gian (UTC+7)</dt><dd class="col-sm-8">@Model.StartsAtLocal?.ToString("dd/MM/yyyy HH:mm") – @Model.EndsAtLocal?.ToString("dd/MM/yyyy HH:mm")</dd></dl>
+            <input asp-for="Code" type="hidden" /><input asp-for="Kind" type="hidden" />
+            <input type="hidden" name="Value" value="@Model.Value.ToString(invariant)" />
+            <input type="hidden" name="MinimumSubtotal" value="@Model.MinimumSubtotal.ToString(invariant)" />
+            <input type="hidden" name="StartsAtLocal" value="@Model.StartsAtLocal?.ToString("O", invariant)" />
+            <input type="hidden" name="EndsAtLocal" value="@Model.EndsAtLocal?.ToString("O", invariant)" />
+        }
+        else
+        {
+            <div class="row g-3">
+                <div class="col-md-6"><label asp-for="Code" class="form-label"></label><input asp-for="Code" class="form-control" maxlength="50" autocomplete="off" /><span asp-validation-for="Code" class="text-danger small"></span></div>
+                <div class="col-md-6"><label asp-for="Kind" class="form-label"></label><select asp-for="Kind" class="form-select"><option value="0">Số tiền cố định (đồng)</option><option value="1">Phần trăm (%)</option></select></div>
+                <div class="col-md-6"><label asp-for="Value" class="form-label"></label><input asp-for="Value" class="form-control" type="number" min="0.01" max="1000000000" step="0.01" /><span asp-validation-for="Value" class="text-danger small"></span></div>
+                <div class="col-md-6"><label asp-for="MinimumSubtotal" class="form-label"></label><input asp-for="MinimumSubtotal" class="form-control" type="number" min="0" max="1000000000" step="0.01" /><span asp-validation-for="MinimumSubtotal" class="text-danger small"></span></div>
+                <div class="col-md-6"><label asp-for="StartsAtLocal" class="form-label"></label><input asp-for="StartsAtLocal" asp-format="{0:yyyy-MM-ddTHH:mm}" type="datetime-local" class="form-control" /><span asp-validation-for="StartsAtLocal" class="text-danger small"></span></div>
+                <div class="col-md-6"><label asp-for="EndsAtLocal" class="form-label"></label><input asp-for="EndsAtLocal" asp-format="{0:yyyy-MM-ddTHH:mm}" type="datetime-local" class="form-control" /><span asp-validation-for="EndsAtLocal" class="text-danger small"></span></div>
+            </div>
+        }
+        <div class="mt-3"><label asp-for="MaxUses" class="form-label"></label><input asp-for="MaxUses" type="number" min="@(Math.Max(1, Model.UsedCount))" max="1000000" class="form-control" /><span asp-validation-for="MaxUses" class="text-danger small"></span></div>
+        <div class="form-check my-4"><input asp-for="IsActive" class="form-check-input" /><label asp-for="IsActive" class="form-check-label"></label></div>
+        <p class="small text-secondary">Checkout tính lại ưu đãi trên máy chủ. Giá trị giảm không vượt tiền hàng; phí vận chuyển không được giảm. Thời điểm kết thúc là mốc không còn được sử dụng.</p>
+        <button type="submit" class="btn btn-primary">@(editing ? "Lưu thay đổi" : "Tạo mã")</button>
+    </form>
+</section>
+@section Scripts { <partial name="~/Views/Shared/_ValidationScriptsPartial.cshtml" /> }

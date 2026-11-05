@@ -1,8 +1,65 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@model WEB_BAN_NONG_SAN.ViewModels.CatalogHomeViewModel
+@{ ViewData["Title"] = "Nông sản cho bữa ăn mỗi ngày"; }
+<section class="store-hero" aria-labelledby="hero-title">
+    <div class="store-hero-copy">
+        <p class="store-eyebrow">GỬI MỘT CHÚT LÀNH VÀO BỮA ĂN</p>
+        <h1 id="hero-title">Từ đất lành,<br /><em>đến bếp nhà.</em></h1>
+        <p>Chọn nông sản cho những bữa cơm thường ngày. Tìm món bạn cần, thêm vào giỏ và đặt giao đến địa chỉ của bạn.</p>
+        <a class="store-button" asp-controller="Catalog" asp-action="Index">Khám phá cửa hàng <span aria-hidden="true">→</span></a>
+        <div class="store-hero-caption"><span class="store-caption-line"></span><span>Gần gũi với bữa ăn. Dễ dàng trong lựa chọn.</span></div>
+    </div>
+    <div class="store-hero-art" aria-hidden="true">
+        <span class="store-art-circle"></span>
+        <svg class="store-harvest-art" viewBox="0 0 430 390" fill="none">
+            <ellipse cx="218" cy="346" rx="145" ry="18" fill="#6F4E37" opacity=".12" />
+            <path d="M98 250h243l-28 87H126l-28-87Z" fill="#D4B89C" stroke="#6F4E37" stroke-width="3" />
+            <path d="M119 269h201M125 291h189M132 314h176M151 253l11 82M189 253l4 82M231 253l-4 82M270 253l-10 82M307 253l-17 82" stroke="#6F4E37" stroke-width="3" opacity=".55" />
+            <path d="M160 241c-48-41-65-82-30-118 17 30 31 55 40 78-14-70 5-119 47-131-2 49-7 104-23 151 25-66 53-97 85-89-10 47-30 82-57 109H160Z" fill="#83977D" stroke="#566C50" stroke-width="3" stroke-linejoin="round" />
+            <path d="M181 236c1-39 8-96 25-140M156 221l-24-73M204 232l53-83" stroke="#566C50" stroke-width="3" />
+            <path d="M237 157c21 11 68 56 62 84-6 28-40 36-57 13-16-22-18-70-5-97Z" fill="#D59468" stroke="#6F4E37" stroke-width="3" />
+            <path d="m237 160-20-31m20 31 6-43m-6 43 24-24" stroke="#566C50" stroke-width="7" stroke-linecap="round" />
+            <path d="m251 195 14-7m-8 29 18-7m-5 28 14-7" stroke="#A56C49" stroke-width="3" stroke-linecap="round" />
+            <path d="M95 217c-11-26 9-55 40-51 39-4 57 23 45 53-12 30-27 43-45 43s-28-15-40-45Z" fill="#B87663" stroke="#6F4E37" stroke-width="3" />
+            <path d="M132 174c-4-10-1-21 10-29m-5 16c20-17 36-5 39 3-17 11-28 7-39-3Z" fill="#83977D" stroke="#566C50" stroke-width="3" />
+            <circle cx="308" cy="228" r="38" fill="#C2B4CE" stroke="#6F4E37" stroke-width="3" />
+            <path d="M307 192c-9-11-6-22 6-29m-4 21c17-17 35-13 39-5-13 15-27 18-39 5Z" fill="#83977D" stroke="#566C50" stroke-width="3" />
+            <path d="m75 115 5-13 5 13 13 5-13 5-5 13-5-13-13-5 13-5Zm264-34 4-11 4 11 11 4-11 4-4 11-4-11-11-4 11-4Z" fill="#6F4E37" opacity=".5" />
+        </svg>
+        <span class="store-art-label">BỮA ĂN THÊM MỘT CHÚT LÀNH</span>
+    </div>
+</section>
+<section class="store-benefits" aria-label="Thông tin mua sắm">
+    <div><span aria-hidden="true">01</span><p><strong>Chọn theo nhu cầu</strong><small>Danh mục, giá và đơn vị rõ ràng</small></p></div>
+    <div><span aria-hidden="true">02</span><p><strong>Đặt hàng thuận tiện</strong><small>Lưu địa chỉ, quản lý giỏ hàng</small></p></div>
+    <div><span aria-hidden="true">03</span><p><strong>Thanh toán COD</strong><small>Thanh toán khi nhận hàng</small></p></div>
+</section>
+@if (!Model.IsDataAvailable)
+{
+    <div class="store-empty" role="status"><h2>Chưa thể tải cửa hàng</h2><p>Vui lòng thử lại sau. Chúng tôi chưa thể xác nhận thông tin sản phẩm lúc này.</p><a class="store-button store-button-outline" asp-action="Index">Tải lại trang</a></div>
 }
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+else
+{
+    @if (Model.Categories.Count > 0)
+    {
+        <section class="store-section" aria-labelledby="categories-title">
+            <div class="store-section-heading"><div><p class="store-eyebrow">CHỌN ĐIỀU BẠN CẦN</p><h2 id="categories-title">Ghé từng góc nhỏ</h2></div><a asp-controller="Catalog" asp-action="Index">Xem cửa hàng <span aria-hidden="true">→</span></a></div>
+            <div class="store-categories">@foreach (var category in Model.Categories){<a asp-controller="Catalog" asp-action="Index" asp-route-categoryId="@category.Id"><span class="store-category-leaf" aria-hidden="true">❧</span><span>@category.Name</span><span aria-hidden="true">→</span></a>}</div>
+        </section>
+    }
+    @if (Model.FeaturedProducts.Count > 0)
+    {
+        <section class="store-section" aria-labelledby="featured-title">
+            <div class="store-section-heading"><div><p class="store-eyebrow">GỢI Ý TỪ CỬA HÀNG</p><h2 id="featured-title">Sản phẩm nổi bật</h2></div><a asp-controller="Catalog" asp-action="Index">Xem tất cả <span aria-hidden="true">→</span></a></div>
+            <div class="store-product-grid">@foreach(var product in Model.FeaturedProducts){<partial name="~/Views/Catalog/_ProductCard.cshtml" model="product" />}</div>
+        </section>
+    }
+    <section class="store-section" aria-labelledby="new-title">
+        <div class="store-section-heading"><div><p class="store-eyebrow">THÊM VÀO LỰA CHỌN CỦA BẠN</p><h2 id="new-title">Mới có tại cửa hàng</h2></div><a asp-controller="Catalog" asp-action="Index">Tất cả sản phẩm <span aria-hidden="true">→</span></a></div>
+        @if (Model.NewProducts.Count == 0)
+        {
+            <div class="store-empty"><span class="store-empty-icon" aria-hidden="true">❧</span><h3>Cửa hàng đang chuẩn bị sản phẩm</h3><p>Chưa có sản phẩm đang bán. Hãy quay lại sau để xem danh mục mới.</p></div>
+        }
+        else {<div class="store-product-grid">@foreach(var product in Model.NewProducts){<partial name="~/Views/Catalog/_ProductCard.cshtml" model="product" />}</div>}
+    </section>
+}
+<section class="store-story"><div><p class="store-eyebrow">CHĂM CHÚT NHỮNG ĐIỀU GIẢN DỊ</p><h2>Bữa ăn ngon bắt đầu<br />từ những lựa chọn nhỏ.</h2></div><div><p>Không cần cầu kỳ để có một bữa ăn ấm áp. Cửa hàng giúp bạn tìm kiếm nông sản, xem thông tin rõ ràng và theo dõi đơn hàng trong cùng một nơi.</p><a asp-controller="Catalog" asp-action="Index">Bắt đầu mua sắm <span aria-hidden="true">→</span></a></div></section>

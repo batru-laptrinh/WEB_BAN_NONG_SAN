@@ -351,11 +351,13 @@ namespace WEB_BAN_NONG_SAN.Controllers
                         "Khôi phục mật khẩu - Nông Sản Sạch",
                         htmlMessage);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // Chỉ ghi lỗi kỹ thuật vào log, không lộ thông tin
                     // tài khoản/token hoặc lỗi SMTP cho người dùng.
-                    _logger.LogError(ex, "Không thể gửi email khôi phục mật khẩu.");
+                    // SMTP/provider exception text can contain recipient details,
+                    // credentials or links. Record a fixed message only.
+                    _logger.LogError("Không thể gửi email khôi phục mật khẩu.");
                 }
             }
 

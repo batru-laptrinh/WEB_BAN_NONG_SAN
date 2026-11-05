@@ -3,15 +3,13 @@
     var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
     var isDashboard = string.Equals(currentController, "Dashboard", StringComparison.OrdinalIgnoreCase);
     var isUsers = string.Equals(currentController, "Users", StringComparison.OrdinalIgnoreCase);
-    var upcomingItems = new[]
+    var commerceItems = new[]
     {
-        (Icon: "folder", Label: "Quản lý danh mục"),
-        (Icon: "box", Label: "Quản lý sản phẩm"),
-        (Icon: "warehouse", Label: "Quản lý kho hàng"),
-        (Icon: "bag", Label: "Quản lý đơn hàng"),
-        (Icon: "tag", Label: "Quản lý mã giảm giá"),
-        (Icon: "chart", Label: "Thống kê và báo cáo"),
-        (Icon: "settings", Label: "Cài đặt")
+        (Icon: "folder", Label: "Quản lý danh mục", Controller: "Categories"),
+        (Icon: "box", Label: "Sản phẩm & kho hàng", Controller: "Products"),
+        (Icon: "bag", Label: "Quản lý đơn hàng", Controller: "Orders"),
+        (Icon: "tag", Label: "Mã giảm giá", Controller: "Coupons"),
+        (Icon: "chart", Label: "Thống kê & báo cáo", Controller: "Reports")
     };
 }
 <!DOCTYPE html>
@@ -23,6 +21,8 @@
     <link rel="icon" href="~/favicon.ico" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/commerce.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="admin-body">
     <a class="admin-skip-link" href="#admin-main">Đến nội dung chính</a>
@@ -55,12 +55,14 @@
                             <span class="admin-current-dot" aria-hidden="true"></span>
                         }
                     </a>
-                    @foreach (var item in upcomingItems)
+                    @foreach (var item in commerceItems)
                     {
-                        <span class="admin-nav-item is-upcoming" aria-disabled="true">
+                        var selected = string.Equals(currentController, item.Controller, StringComparison.OrdinalIgnoreCase);
+                        <a asp-area="Admin" asp-controller="@item.Controller" asp-action="Index" class="admin-nav-item @(selected ? "is-active" : "")" aria-current="@(selected ? "page" : null)">
                             <svg class="admin-icon" aria-hidden="true"><use href="#admin-@item.Icon"></use></svg>
-                            <span class="admin-nav-label">@item.Label<small>Sắp triển khai</small></span>
-                        </span>
+                            <span>@item.Label</span>
+                            @if (selected) { <span class="admin-current-dot" aria-hidden="true"></span> }
+                        </a>
                     }
                 </nav>
                 <div class="admin-sidebar-bottom">
@@ -106,6 +108,7 @@
             <footer class="admin-footer"><span>WEB_BAN_NONG_SAN</span><span>Chăm chút từ nông sản đến trải nghiệm.</span></footer>
         </div>
     </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

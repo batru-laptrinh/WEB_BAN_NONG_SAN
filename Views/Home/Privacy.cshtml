@@ -1,6 +1,16 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Thông tin cá nhân và quyền riêng tư";
 }
 <h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<section class="commerce-card p-4 p-md-5 mt-4">
+    <p>Website sử dụng thông tin tài khoản, số điện thoại và địa chỉ bạn cung cấp để quản lý tài khoản, giao hàng và theo dõi đơn mua.</p>
+    <h2 class="h4 mt-4">Dữ liệu tài khoản và đơn hàng</h2>
+    <p>Bạn có thể xem và chỉnh sửa hồ sơ, sổ địa chỉ của mình sau khi đăng nhập. Đơn hàng giữ lại thông tin người nhận, sản phẩm và giá tại thời điểm đặt hàng để đối chiếu; sửa hoặc xóa địa chỉ đã lưu không làm thay đổi đơn trước đó.</p>
+    <p>Quản trị viên được phân quyền có thể xử lý tài khoản và đơn hàng để vận hành cửa hàng. Mật khẩu được Identity lưu dưới dạng băm; website không hiển thị mật khẩu hoặc token bảo mật cho người dùng khác.</p>
+    <h2 class="h4 mt-4">Cookie và thanh toán</h2>
+    <p>Cookie cần thiết giúp duy trì phiên đăng nhập và bảo vệ biểu mẫu. Website hiện nhận thanh toán khi giao hàng (COD), không yêu cầu số thẻ, tài khoản ngân hàng hoặc mã OTP thanh toán.</p>
+    <h2 class="h4 mt-4">Kiểm tra thông tin</h2>
+    <p>Hãy kiểm tra địa chỉ và số điện thoại trước khi đặt hàng, giữ kín tài khoản và đăng xuất trên thiết bị dùng chung. Liên hệ bên vận hành cửa hàng nếu cần kiểm tra thông tin không thể chỉnh sửa trong hồ sơ; website chưa cung cấp chức năng xóa tài khoản trực tuyến.</p>
+    <a asp-controller="Profile" asp-action="Index" class="btn btn-primary mt-2">Đến hồ sơ của tôi</a>
+</section>

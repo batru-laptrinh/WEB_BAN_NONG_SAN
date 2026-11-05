@@ -69,7 +69,8 @@ public sealed class AdminDashboardTests
         Assert.Matches("data-testid=\"customer-count\"[^>]*>\\s*2\\s*<", html);
         Assert.Contains("/css/admin", html);
         Assert.Contains("/Account/Logout", html);
-        Assert.Contains("Sắp triển khai", html);
+        Assert.Contains("href=\"/Admin/Products\"", html);
+        Assert.Contains("href=\"/Admin/Reports\"", html);
         Assert.DoesNotContain("href=\"#\"", html);
         Assert.True(response.Headers.CacheControl?.NoStore);
 

@@ -1,0 +1,32 @@
+@model WEB_BAN_NONG_SAN.ViewModels.OrderListViewModel
+@using WEB_BAN_NONG_SAN.ViewModels
+@using WEB_BAN_NONG_SAN.Models
+@using System.Globalization
+@{ ViewData["Title"] = "Quản lý đơn hàng"; }
+<header class="mb-4"><p class="text-uppercase small text-muted">Kinh doanh</p><h1 class="h2">Quản lý đơn hàng</h1><p>Theo dõi đơn COD và cập nhật trạng thái theo quy trình.</p></header>
+@if (TempData["ErrorMessage"] is string error) {<div role="alert" class="alert alert-danger">@error</div>}
+<form method="get" asp-action="Index" class="card border-0 shadow-sm p-3 mb-4"><div class="row g-3 align-items-end">
+    <div class="col-md-6"><label for="order-search" class="form-label">Mã đầy đủ, người nhận hoặc số điện thoại</label><input id="order-search" name="search" value="@Model.Search" maxlength="100" class="form-control" /></div>
+    <div class="col-md-4"><label for="order-status" class="form-label">Trạng thái</label><select id="order-status" name="status" class="form-select"><option value="">Tất cả trạng thái</option>
+        @foreach (var status in Enum.GetValues<OrderStatus>()) {<option value="@status" selected="@(Model.Status == status)">@OrderDisplay.Status(status)</option>}
+    </select></div><div class="col-md-2"><button class="btn btn-primary w-100" type="submit">Lọc đơn</button></div>
+</div></form>
+@if (!Model.IsDataAvailable) {<div class="alert alert-warning" role="alert">Tạm thời chưa tải được dữ liệu đơn hàng. Vui lòng thử lại.</div>}
+else if (Model.TotalCount == 0) {<div class="card border-0 shadow-sm p-4"><p class="mb-0">Chưa có đơn hàng phù hợp bộ lọc.</p></div>}
+else
+{
+    <p>@Model.TotalCount đơn hàng · Trang @Model.Page / @Model.TotalPages</p>
+    <div class="row g-3">
+    @foreach (var order in Model.Items)
+    {
+        <article class="col-12"><div class="card border-0 shadow-sm"><div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div class="text-break"><h2 class="h6">Đơn @order.Code</h2><p class="mb-1">@order.RecipientName</p><p class="small text-muted mb-1">@order.CreatedAtUtc.AddHours(7).ToString("dd/MM/yyyy HH:mm") (GMT+7)</p><span class="badge bg-light text-dark border">@OrderDisplay.Status(order.Status)</span></div>
+            <div class="text-end"><strong>@order.Total.ToString("#,##0.##", CultureInfo.GetCultureInfo("vi-VN")) ₫</strong><p class="small">@OrderDisplay.Payment(order.PaymentStatus)</p><a class="btn btn-outline-primary btn-sm" asp-action="Details" asp-route-id="@order.Id">Xem và xử lý</a></div>
+        </div></div></article>
+    }
+    </div>
+    <nav aria-label="Phân trang đơn hàng" class="d-flex justify-content-center gap-3 mt-4">
+        @if (Model.Page > 1) {<a class="btn btn-outline-secondary" asp-action="Index" asp-route-search="@Model.Search" asp-route-status="@Model.Status" asp-route-page="@(Model.Page - 1)">Trang trước</a>}
+        @if (Model.Page < Model.TotalPages) {<a class="btn btn-outline-secondary" asp-action="Index" asp-route-search="@Model.Search" asp-route-status="@Model.Status" asp-route-page="@(Model.Page + 1)">Trang sau</a>}
+    </nav>
+}

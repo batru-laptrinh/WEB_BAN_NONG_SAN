@@ -1,0 +1,31 @@
+@model WEB_BAN_NONG_SAN.ViewModels.OrderListViewModel
+@using WEB_BAN_NONG_SAN.ViewModels
+@using System.Globalization
+@{ ViewData["Title"] = "Đơn hàng của tôi"; }
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4"><div><p class="text-uppercase small text-muted mb-1">Tài khoản của bạn</p><h1 class="h2">Đơn hàng của tôi</h1></div><a class="btn btn-outline-secondary" asp-controller="Catalog" asp-action="Index">Tiếp tục mua sắm</a></div>
+@if (TempData["ErrorMessage"] is string error) {<div role="alert" class="alert alert-danger">@error</div>}
+@if (!Model.IsDataAvailable)
+{
+    <div role="alert" class="alert alert-warning">Tạm thời chưa tải được đơn hàng. Vui lòng thử lại sau.</div>
+}
+else if (Model.TotalCount == 0)
+{
+    <div class="card border-0 shadow-sm p-4 text-center"><h2 class="h4">Bạn chưa có đơn hàng</h2><p>Chọn nông sản yêu thích và đặt đơn COD đầu tiên của bạn.</p><a class="btn btn-primary align-self-center" asp-controller="Catalog" asp-action="Index">Khám phá sản phẩm</a></div>
+}
+else
+{
+    <p class="text-muted">@Model.TotalCount đơn hàng · Trang @Model.Page / @Model.TotalPages</p>
+    <div class="row g-3">
+    @foreach (var order in Model.Items)
+    {
+        <article class="col-12"><div class="card border-0 shadow-sm"><div class="card-body d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <div class="text-break"><h2 class="h6 mb-1">Đơn @order.Code</h2><p class="small text-muted mb-1">@order.CreatedAtUtc.AddHours(7).ToString("dd/MM/yyyy HH:mm") (GMT+7)</p><span class="badge bg-light text-dark border">@OrderDisplay.Status(order.Status)</span></div>
+            <div class="text-end"><strong>@order.Total.ToString("#,##0.##", CultureInfo.GetCultureInfo("vi-VN")) ₫</strong><br /><a asp-action="Details" asp-route-id="@order.Id" class="btn btn-outline-primary btn-sm mt-2">Xem chi tiết</a></div>
+        </div></div></article>
+    }
+    </div>
+    <nav class="d-flex justify-content-center gap-3 mt-4" aria-label="Phân trang đơn hàng">
+        @if (Model.Page > 1) {<a class="btn btn-outline-secondary" asp-action="Index" asp-route-page="@(Model.Page - 1)">Trang trước</a>}
+        @if (Model.Page < Model.TotalPages) {<a class="btn btn-outline-secondary" asp-action="Index" asp-route-page="@(Model.Page + 1)">Trang sau</a>}
+    </nav>
+}

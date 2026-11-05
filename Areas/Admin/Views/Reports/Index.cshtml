@@ -1,0 +1,34 @@
+@model WEB_BAN_NONG_SAN.ViewModels.ReportsViewModel
+@{
+    ViewData["Title"] = "Thống kê và báo cáo";
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+<div class="d-flex flex-wrap justify-content-between gap-3 align-items-end mb-4"><div><p class="text-uppercase small text-secondary mb-1">Dữ liệu cho quyết định kinh doanh</p><h1 class="h2 mb-2">Thống kê và báo cáo</h1><p class="text-secondary mb-0">Doanh thu ghi nhận từ đơn hoàn thành và đã thanh toán.</p></div><a asp-action="Index" class="btn btn-outline-secondary">Làm mới dữ liệu</a></div>
+@if (!Model.IsDataAvailable)
+{
+    <div class="alert alert-warning" role="alert">Chưa tải được báo cáo. Vui lòng thử lại sau; không có số liệu thay thế được hiển thị.</div>
+}
+else
+{
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-xl-3"><section class="card border-0 shadow-sm rounded-4 p-4 h-100"><span class="text-secondary small">Tài khoản Customer</span><strong class="fs-2">@Model.CustomerCount.ToString("N0", culture)</strong><small class="text-secondary">Gồm cả Admin có vai trò Customer</small></section></div>
+        <div class="col-6 col-xl-3"><section class="card border-0 shadow-sm rounded-4 p-4 h-100"><span class="text-secondary small">Tổng sản phẩm</span><strong class="fs-2">@Model.ProductCount.ToString("N0", culture)</strong><small class="text-secondary">Bao gồm sản phẩm ngừng bán</small></section></div>
+        <div class="col-6 col-xl-3"><section class="card border-0 shadow-sm rounded-4 p-4 h-100"><span class="text-secondary small">Tổng đơn hàng</span><strong class="fs-2">@Model.OrderCount.ToString("N0", culture)</strong><small class="text-secondary">@Model.PendingOrderCount chờ xử lý · @Model.CompletedOrderCount hoàn thành</small></section></div>
+        <div class="col-6 col-xl-3"><section class="card border-0 shadow-sm rounded-4 p-4 h-100"><span class="text-secondary small">Doanh thu đã thu</span><strong class="fs-3" data-testid="report-revenue">@Model.Revenue.ToString("N2", culture) đ</strong><small class="text-secondary">Tổng thanh toán sau giảm giá, gồm phí giao hàng</small></section></div>
+    </div>
+    <p class="small text-secondary">Cập nhật lúc @Model.CheckedAtUtc.AddHours(7).ToString("HH:mm dd/MM/yyyy") (UTC+7). Báo cáo ngày/tháng theo thời điểm hoàn thành; đơn hủy và đơn chưa thanh toán không được tính doanh thu.</p>
+    <div class="row g-4">
+        <div class="col-lg-6"><section class="card border-0 shadow-sm rounded-4 p-4 h-100"><h2 class="h5 mb-3">Doanh thu 30 ngày gần nhất</h2>
+            @if (Model.DailyRevenue.All(x => x.OrderCount == 0)) { <p class="text-secondary">Chưa có đơn hoàn thành và đã thanh toán trong khoảng này.</p> }
+            <div class="table-responsive" style="max-height:27rem"><table class="table table-sm align-middle"><thead><tr><th>Ngày (UTC+7)</th><th class="text-end">Đơn</th><th class="text-end">Doanh thu</th></tr></thead><tbody>@foreach (var row in Model.DailyRevenue.Reverse()) { <tr><td>@row.Label</td><td class="text-end">@row.OrderCount</td><td class="text-end text-nowrap">@row.Revenue.ToString("N2", culture) đ</td></tr> }</tbody></table></div>
+        </section></div>
+        <div class="col-lg-6"><section class="card border-0 shadow-sm rounded-4 p-4 h-100"><h2 class="h5 mb-3">Doanh thu 12 tháng gần nhất</h2>
+            @if (Model.MonthlyRevenue.All(x => x.OrderCount == 0)) { <p class="text-secondary">Chưa có đơn hoàn thành và đã thanh toán trong khoảng này.</p> }
+            <div class="table-responsive"><table class="table table-sm align-middle"><thead><tr><th>Tháng (UTC+7)</th><th class="text-end">Đơn</th><th class="text-end">Doanh thu</th></tr></thead><tbody>@foreach (var row in Model.MonthlyRevenue.Reverse()) { <tr><td>@row.Label</td><td class="text-end">@row.OrderCount</td><td class="text-end text-nowrap">@row.Revenue.ToString("N2", culture) đ</td></tr> }</tbody></table></div>
+        </section></div>
+    </div>
+    <section class="card border-0 shadow-sm rounded-4 p-4 mt-4"><h2 class="h5 mb-2">10 sản phẩm bán nhiều nhất</h2><p class="small text-secondary">Tính từ đơn hoàn thành và đã thanh toán. Tên và đơn vị là bản lưu tại lúc mua; tổng tiền hàng chưa trừ giảm giá hoặc cộng phí giao hàng.</p>
+        @if (Model.TopProducts.Count == 0) { <p class="text-secondary mb-0">Chưa có dữ liệu bán hàng đã hoàn thành.</p> }
+        else { <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Sản phẩm tại lúc mua</th><th>Đơn vị</th><th class="text-end">Số lượng</th><th class="text-end">Tiền hàng</th></tr></thead><tbody>@foreach (var item in Model.TopProducts) { <tr><td>@item.ProductName</td><td>@item.Unit</td><td class="text-end">@item.Quantity.ToString("N0", culture)</td><td class="text-end text-nowrap">@item.GrossValue.ToString("N2", culture) đ</td></tr> }</tbody></table></div> }
+    </section>
+}

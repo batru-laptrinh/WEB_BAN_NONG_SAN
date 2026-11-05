@@ -1,52 +1,54 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - WEB_BAN_NONG_SAN</title>
-    <script type="importmap"></script>
+    <meta name="theme-color" content="#6F4E37" />
+    <title>@ViewData["Title"] · Nông Sản</title>
+    <link rel="icon" href="~/favicon.ico" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WEB_BAN_NONG_SAN.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/commerce.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/store.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WEB_BAN_NONG_SAN</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                
-<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-    <ul class="navbar-nav flex-grow-1">
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </li>
-    </ul>
-
-    <div class="ms-sm-auto mt-2 mt-sm-0">
-        <partial name="_LoginPartial" />
-    </div>
-</div>
-
+<body class="store-body">
+    <a href="#store-main" class="store-skip-link">Đến nội dung chính</a>
+    <div class="store-topline"><div class="container"><span>Nông sản cho bữa ăn mỗi ngày</span><span>Thanh toán khi nhận hàng · COD</span></div></div>
+    <header class="store-header">
+        <nav class="navbar navbar-expand-lg" aria-label="Điều hướng chính">
+            <div class="container store-nav-inner">
+                <a class="store-brand" asp-area="" asp-controller="Home" asp-action="Index" aria-label="Nông Sản — Trang chủ">
+                    <span class="store-brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M26 5C12 3 5 10 8 19c8 3 17-2 18-14Z" /><path d="M5 28 21 11" /></svg></span>
+                    <span>NÔNG SẢN<small>TỪ ĐẤT LÀNH, ĐẾN BẾP NHÀ</small></span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#store-navigation" aria-controls="store-navigation" aria-expanded="false" aria-label="Mở menu"><span class="navbar-toggler-icon"></span></button>
+                <div id="store-navigation" class="collapse navbar-collapse">
+                    <ul class="navbar-nav store-nav-links ms-lg-auto">
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Catalog" asp-action="Index">Cửa hàng</a></li>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Profile" asp-action="Index">Tài khoản</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Orders" asp-action="Index">Đơn hàng</a></li>
+                        }
+                        <li class="nav-item"><a class="nav-link store-cart-link" asp-area="" asp-controller="Cart" asp-action="Index"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14l-1 13H6L5 7Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Giỏ hàng</a></li>
+                    </ul>
+                    <div class="store-account"><partial name="_LoginPartial" /></div>
+                </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - WEB_BAN_NONG_SAN - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <main id="store-main" class="container store-main" tabindex="-1">@RenderBody()</main>
+    <footer class="store-footer">
+        <div class="container store-footer-grid">
+            <div><a class="store-footer-brand" asp-area="" asp-controller="Home" asp-action="Index">NÔNG SẢN</a><p>Một lựa chọn gần gũi cho căn bếp.<br />Khám phá nông sản, mua sắm thật dễ dàng.</p></div>
+            <nav aria-label="Liên kết cửa hàng"><strong>Khám phá</strong><a asp-area="" asp-controller="Catalog" asp-action="Index">Tất cả sản phẩm</a><a asp-area="" asp-controller="Cart" asp-action="Index">Giỏ hàng của bạn</a><a asp-area="" asp-controller="Home" asp-action="Privacy">Quyền riêng tư</a></nav>
+            <nav aria-label="Liên kết tài khoản"><strong>Tài khoản</strong><a asp-area="" asp-controller="Profile" asp-action="Index">Hồ sơ cá nhân</a><a asp-area="" asp-controller="Addresses" asp-action="Index">Địa chỉ giao hàng</a><a asp-area="" asp-controller="Orders" asp-action="Index">Theo dõi đơn hàng</a></nav>
+            <div class="store-footer-note"><strong>Mua sắm an tâm</strong><p>Kiểm tra đơn hàng trước khi xác nhận. Thanh toán COD khi nhận hàng.</p><span>Gọn trong thao tác, trọn trong bữa ăn.</span></div>
         </div>
+        <div class="container store-footer-bottom"><span>© @DateTime.UtcNow.Year WEB_BAN_NONG_SAN</span><span>Được chăm chút cho từng trải nghiệm.</span></div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

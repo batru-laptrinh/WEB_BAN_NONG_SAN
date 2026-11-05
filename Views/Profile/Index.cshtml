@@ -90,6 +90,12 @@
 
                     <hr class="my-4" />
 
+                    <nav class="store-profile-links" aria-label="Mua sắm và giao hàng">
+                        <a asp-controller="Addresses" asp-action="Index"><strong>Địa chỉ giao hàng</strong><span>Thêm, sửa và chọn địa chỉ mặc định →</span></a>
+                        <a asp-controller="Cart" asp-action="Index"><strong>Giỏ hàng</strong><span>Xem những sản phẩm đang chọn →</span></a>
+                        <a asp-controller="Orders" asp-action="Index"><strong>Đơn hàng của tôi</strong><span>Theo dõi đơn mua và trạng thái giao hàng →</span></a>
+                    </nav>
+
                     <div class="text-center">
                         <a asp-controller="Account"
                            asp-action="ChangePassword"

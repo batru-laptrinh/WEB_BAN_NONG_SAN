@@ -1,0 +1,43 @@
+@model WEB_BAN_NONG_SAN.ViewModels.AddressIndexViewModel
+@{ ViewData["Title"] = "Địa chỉ giao hàng"; }
+@section Styles { <link rel="stylesheet" href="~/css/addresses.css" asp-append-version="true" /> }
+<section class="address-page">
+    <div class="address-heading">
+        <div><p class="address-eyebrow">TÀI KHOẢN CỦA BẠN</p><h1>Địa chỉ giao hàng</h1><p>Lưu nơi nhận hàng để đặt mua thuận tiện hơn.</p></div>
+        <a class="address-button" asp-action="Create">+ Thêm địa chỉ</a>
+    </div>
+    <nav class="address-breadcrumb" aria-label="Điều hướng tài khoản"><a asp-controller="Profile" asp-action="Index">Hồ sơ cá nhân</a><span aria-hidden="true">/</span><span aria-current="page">Địa chỉ giao hàng</span></nav>
+    @if (TempData["AddressSuccess"] is string success) { <div class="alert alert-success" role="status">@success</div> }
+    @if (TempData["AddressError"] is string error) { <div class="alert alert-danger" role="alert">@error</div> }
+    @if (!Model.IsDataAvailable)
+    {
+        <div class="address-empty"><h2>Chưa tải được địa chỉ</h2><p>Vui lòng tải lại danh sách hoặc thử lại sau.</p><a asp-action="Index" class="address-button address-button-secondary">Tải lại</a></div>
+    }
+    else if (Model.Items.Count == 0)
+    {
+        <div class="address-empty"><span class="address-empty-symbol" aria-hidden="true">⌂</span><h2>Bạn chưa lưu địa chỉ nào</h2><p>Thêm địa chỉ đầu tiên. Địa chỉ này sẽ tự động được chọn làm mặc định.</p><a asp-action="Create" class="address-button">Thêm địa chỉ đầu tiên</a></div>
+    }
+    else
+    {
+        <div class="address-grid">
+            @foreach (var address in Model.Items)
+            {
+                <article class="address-card @(address.IsDefault ? "is-default" : "")" data-address-id="@address.Id">
+                    <div class="address-card-top"><h2>@(address.Label ?? "Địa chỉ giao hàng")</h2>@if (address.IsDefault) { <span class="address-default-badge">Mặc định</span> }</div>
+                    <strong class="address-recipient">@address.RecipientName</strong><p class="address-phone">@address.PhoneNumber</p>
+                    <p class="address-location">@address.AddressLine<br />@address.Ward@if (!string.IsNullOrEmpty(address.District)) {<text>, @address.District</text>}<text>, @address.Province</text></p>
+                    @if (!string.IsNullOrEmpty(address.DeliveryNote)) { <p class="address-note"><span>Ghi chú:</span> @address.DeliveryNote</p> }
+                    <div class="address-actions">
+                        <a asp-action="Edit" asp-route-id="@address.Id" class="address-text-link">Chỉnh sửa</a>
+                        <a asp-action="Delete" asp-route-id="@address.Id" class="address-text-link address-delete-link">Xóa</a>
+                        @if (!address.IsDefault)
+                        {
+                            <form asp-action="SetDefault" asp-route-id="@address.Id" method="post"><input type="hidden" name="confirmation" value="@address.DefaultToken" /><button class="address-text-link" type="submit">Đặt làm mặc định</button></form>
+                        }
+                    </div>
+                </article>
+            }
+        </div>
+        <p class="address-policy">Khi xóa địa chỉ mặc định, địa chỉ được thêm sớm nhất còn lại sẽ trở thành mặc định. Thay đổi sổ địa chỉ không làm thay đổi thông tin giao hàng đã lưu trên đơn hàng.</p>
+    }
+</section>
