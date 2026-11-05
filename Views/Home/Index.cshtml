@@ -1,8 +1,97 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<WEB_BAN_NONG_SAN.Controllers.ProductItem>
+@{
+    ViewData["Title"] = "Trang chủ";
+    var categories = ViewBag.Categories as IEnumerable<WEB_BAN_NONG_SAN.Controllers.CategoryItem>;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-4">
+    <!-- 3. BANNER QUẢNG CÁO -->
+    <div class="hero-banner shadow mb-5">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <span class="badge bg-warning text-dark px-3 py-2 mb-3 fw-bold">
+                    <i class="bi bi-patch-check-fill me-1"></i>100% Nông Sản Sạch Chuẩn VietGAP
+                </span>
+                <h1 class="display-5 fw-bold mb-3">Tươi Ngon Từ Nông Trại Đến Bàn Ăn</h1>
+                <p class="lead mb-4">Cung cấp rau củ hữu cơ, trái cây tươi theo mùa và đặc sản vùng miền thu hoạch mới mỗi ngày. Giao hàng siêu tốc trong 2 giờ.</p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a asp-controller="Products" asp-action="Index" class="btn btn-warning btn-lg fw-bold px-4">
+                        Khám phá ngay <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                    <a asp-controller="Home" asp-action="About" class="btn btn-outline-light btn-lg px-4">
+                        Tìm hiểu thêm
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. DANH MỤC NỔI BẬT -->
+    <section class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="fw-bold text-success mb-0"><i class="bi bi-grid-fill me-2"></i>Danh Mục Nổi Bật</h3>
+            <a asp-controller="Products" asp-action="Index" class="text-success fw-semibold text-decoration-none">
+                Xem tất cả <i class="bi bi-chevron-right"></i>
+            </a>
+        </div>
+        <div class="row g-3">
+            @if (categories != null)
+            {
+                foreach (var cat in categories)
+                {
+                    <div class="col-6 col-md-4 col-lg">
+                        <a asp-controller="Products" asp-action="Index" asp-route-categoryId="@cat.Id" class="category-card shadow-sm">
+                            <i class="bi @cat.Icon fs-2 d-block mb-2"></i>
+                            <span>@cat.Name</span>
+                        </a>
+                    </div>
+                }
+            }
+        </div>
+    </section>
+
+    <!-- 1. SẢN PHẨM NỔI BẬT TRÊN TRANG CHỦ -->
+    <section>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="fw-bold text-success mb-0"><i class="bi bi-stars me-2"></i>Nông Sản Tươi Mới Hôm Nay</h3>
+            <a asp-controller="Products" asp-action="Index" class="btn btn-outline-success btn-sm fw-semibold">
+                Xem toàn bộ sản phẩm
+            </a>
+        </div>
+        <div class="row g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                    <div class="product-card h-100 d-flex flex-column">
+                        <div class="product-img-wrapper">
+                            @if (item.IsNew)
+                            {
+                                <span class="badge bg-danger position-absolute top-0 start-0 m-2">Mới</span>
+                            }
+                            <img src="@item.ImageUrl" alt="@item.Name" />
+                        </div>
+                        <div class="card-body d-flex flex-column p-3">
+                            <span class="badge bg-success-subtle text-success align-self-start mb-2">@item.CategoryName</span>
+                            <h6 class="card-title fw-bold text-truncate" title="@item.Name">@item.Name</h6>
+                            <p class="small text-muted mb-2"><i class="bi bi-geo-alt me-1"></i>@item.Origin</p>
+                            <div class=" mb-3">
+                                <span class="text-danger fw-bold fs-5">@item.Price.ToString("N0") đ</span>
+                                <span class="text-muted small">/ @item.Unit</span>
+                            </div>
+                            <div class="mt-auto d-flex gap-2">
+                                <a asp-controller="Products" asp-action="Details" asp-route-id="@item.Id"
+                                   class="btn btn-outline-success btn-sm flex-grow-1 fw-semibold">
+                                    Chi tiết
+                                </a>
+                                <a asp-controller="Products" asp-action="Details" asp-route-id="@item.Id"
+                                   class="btn btn-success btn-sm" title="Mua ngay">
+                                    <i class="bi bi-cart-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
 </div>

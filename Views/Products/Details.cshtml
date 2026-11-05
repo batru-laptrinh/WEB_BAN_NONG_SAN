@@ -1,0 +1,77 @@
+@model WEB_BAN_NONG_SAN.Controllers.ProductItem
+@{
+    ViewData["Title"] = Model.Name;
+    var related = ViewBag.RelatedProducts as IEnumerable<WEB_BAN_NONG_SAN.Controllers.ProductItem>;
+}
+
+<div class="container mt-4">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-success text-decoration-none">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Products" asp-action="Index" class="text-success text-decoration-none">Sản phẩm</a></li>
+            <li class="breadcrumb-item active" aria-current="page">@Model.Name</li>
+        </ol>
+    </nav>
+
+    <div class="bg-white p-4 rounded-4 shadow-sm mb-5">
+        <div class="row g-4">
+            <div class="col-md-5">
+                <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded-4 w-100" style="max-height: 380px; object-fit: cover;" />
+            </div>
+            <div class="col-md-7 d-flex flex-column">
+                <div class="mb-2">
+                    <span class="badge bg-success me-2">@Model.CategoryName</span>
+                    @if (Model.IsNew)
+                    {
+                        <span class="badge bg-danger">Hàng mới về</span>
+                    }
+                </div>
+                <h2 class="fw-bold mb-2">@Model.Name</h2>
+                <p class="text-muted mb-3"><i class="bi bi-geo-alt-fill text-success me-1"></i>Xuất xứ: <strong>@Model.Origin</strong> | Quy cách: <strong>@Model.Unit</strong></p>
+
+                <div class="bg-light p-3 rounded-3 mb-3">
+                    <span class="text-danger fw-bold display-6">@Model.Price.ToString("N0") đ</span>
+                    <span class="text-muted">/ @Model.Unit</span>
+                </div>
+
+                <p class="mb-4">@Model.Description</p>
+
+                <div class="mt-auto">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <label class="fw-semibold">Số lượng:</label>
+                        <input type="number" value="1" min="1" max="50" class="form-control" style="width: 90px;" />
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a asp-controller="Products" asp-action="Index" class="btn btn-success btn-lg px-4 fw-bold">
+                            <i class="bi bi-cart-plus me-2"></i>Thêm vào giỏ hàng
+                        </a>
+                        <a asp-controller="Products" asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                            <i class="bi bi-arrow-left me-1"></i>Quay lại danh sách
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SẢN PHẨM CÙNG DANH MỤC -->
+    @if (related != null && related.Any())
+    {
+        <h4 class="fw-bold text-success mb-3">Sản Phẩm Cùng Danh Mục</h4>
+        <div class="row g-3">
+            @foreach (var item in related)
+            {
+                <div class="col-6 col-md-3">
+                    <div class="product-card h-100 p-3 d-flex flex-column">
+                        <div class="product-img-wrapper mb-2 rounded-3" style="height: 150px;">
+                            <img src="@item.ImageUrl" alt="@item.Name" />
+                        </div>
+                        <h6 class="fw-bold text-truncate">@item.Name</h6>
+                        <p class="text-danger fw-bold mb-2">@item.Price.ToString("N0") đ</p>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-success btn-sm mt-auto w-100">Xem chi tiết</a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

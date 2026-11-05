@@ -1,0 +1,63 @@
+@{
+    ViewData["Title"] = "Liên hệ";
+}
+
+<div class="container mt-4">
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="bg-success text-white p-4 p-md-5 rounded-4 shadow-sm h-100">
+                <h3 class="fw-bold mb-3">Liên Hệ Với Chúng Tôi</h3>
+                <p class="mb-4">Bạn cần tư vấn chọn nông sản tươi ngon hoặc đặt hàng sỉ cho nhà hàng, bếp ăn? Hãy nhắn cho Nông Sản Xanh ngay!</p>
+                <div class="mb-3">
+                    <h6 class="fw-bold"><i class="bi bi-geo-alt-fill text-warning me-2"></i>Địa chỉ cửa hàng</h6>
+                    <p class="small mb-0">Số 123 Đường Lê Nin, TP. Vinh, Tỉnh Nghệ An</p>
+                </div>
+                <div class="mb-3">
+                    <h6 class="fw-bold"><i class="bi bi-telephone-fill text-warning me-2"></i>Hotline tư vấn</h6>
+                    <p class="small mb-0">0988 123 456 (06:00 - 21:00 hàng ngày)</p>
+                </div>
+                <div>
+                    <h6 class="fw-bold"><i class="bi bi-envelope-fill text-warning me-2"></i>Email</h6>
+                    <p class="small mb-0">hotro@nongsanxanh.vn</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="bg-white p-4 p-md-5 rounded-4 shadow-sm">
+                <h4 class="fw-bold text-success mb-3">Gửi Yêu Cầu Hỗ Trợ</h4>
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success">
+                        <i class="bi bi-check-circle-fill me-2"></i>@TempData["SuccessMessage"]
+                    </div>
+                }
+                <form asp-controller="Home" asp-action="Contact" method="post">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Họ và tên *</label>
+                            <input type="text" name="fullName" class="form-control" required placeholder="Nhập họ và tên..." />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold">Số điện thoại *</label>
+                            <input type="tel" name="phone" class="form-control" required placeholder="Nhập số điện thoại..." />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Địa chỉ Email *</label>
+                            <input type="email" name="email" class="form-control" required placeholder="example@gmail.com" />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Nội dung lời nhắn *</label>
+                            <textarea name="message" rows="4" class="form-control" required placeholder="Nhập nội dung bạn cần tư vấn..."></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-success px-4 py-2 fw-bold">
+                                <i class="bi bi-send me-2"></i>Gửi tin nhắn
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
