@@ -1,0 +1,118 @@
+
+@model WEB_BAN_NONG_SAN.ViewModels.ProfileViewModel
+
+@{
+    ViewData["Title"] = "Thông tin cá nhân";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4 p-md-5">
+
+                    <h2 class="text-center text-success fw-bold mb-3">
+                        Thông tin cá nhân
+                    </h2>
+
+                    <p class="text-center text-muted mb-4">
+                        Quản lý thông tin tài khoản của bạn
+                    </p>
+
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success" role="alert">
+                            @TempData["SuccessMessage"]
+                        </div>
+                    }
+
+                    <form asp-controller="Profile"
+                          asp-action="Index"
+                          method="post">
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-3"></div>
+
+                        <!-- Họ và tên -->
+                        <div class="mb-3">
+                            <label asp-for="FullName"
+                                   class="form-label fw-semibold">
+                            </label>
+
+                            <input asp-for="FullName"
+                                   class="form-control"
+                                   autocomplete="name" />
+
+                            <span asp-validation-for="FullName"
+                                  class="text-danger small"></span>
+                        </div>
+
+                        <!-- Email chỉ hiển thị -->
+                        <div class="mb-3">
+                            <label asp-for="Email"
+                                   class="form-label fw-semibold">
+                                Email
+                            </label>
+
+                            <input asp-for="Email"
+                                   class="form-control bg-light"
+                                   readonly />
+
+                            <small class="text-muted">
+                                Email không thể thay đổi tại đây.
+                            </small>
+                        </div>
+
+                        <!-- Số điện thoại -->
+                        <div class="mb-4">
+                            <label asp-for="PhoneNumber"
+                                   class="form-label fw-semibold">
+                            </label>
+
+                            <input asp-for="PhoneNumber"
+                                   type="tel"
+                                   class="form-control"
+                                   placeholder="Nhập số điện thoại"
+                                   autocomplete="tel" />
+
+                            <span asp-validation-for="PhoneNumber"
+                                  class="text-danger small"></span>
+                        </div>
+
+                        <!-- Lưu thay đổi -->
+                        <button type="submit"
+                                class="btn btn-success w-100 py-2 fw-semibold">
+                            Lưu thay đổi
+                        </button>
+
+                    </form>
+
+                    <hr class="my-4" />
+
+                    <div class="text-center">
+                        <a asp-controller="Account"
+                           asp-action="ChangePassword"
+                           class="text-success text-decoration-none fw-semibold">
+                            Đổi mật khẩu
+                        </a>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <a asp-controller="Home"
+                           asp-action="Index"
+                           class="text-secondary text-decoration-none">
+                            Quay về trang chủ
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
