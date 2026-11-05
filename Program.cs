@@ -61,5 +61,10 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
-
+    
+using (var scope = app.Services.CreateScope())
+{
+    await IdentityRoleSeeder.SeedRolesAsync(
+        scope.ServiceProvider);
+}
 app.Run();
