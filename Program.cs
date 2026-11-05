@@ -3,6 +3,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WEB_BAN_NONG_SAN.Data;
 using WEB_BAN_NONG_SAN.Models;
+using WEB_BAN_NONG_SAN.Tools;
+
+if (FirstAdminCommand.IsRequested(args))
+{
+    Environment.ExitCode = await FirstAdminCommand.RunAsync(args);
+    return;
+}
 
 var builder = WebApplication.CreateBuilder(args);
 
