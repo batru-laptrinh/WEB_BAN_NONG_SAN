@@ -1,0 +1,51 @@
+@model AdminUserConfirmationViewModel
+@{
+    var isLock = Model.Operation == "lock";
+    var actionName = isLock ? "Lock" : "Unlock";
+    var actionTitle = isLock ? "Khóa tài khoản" : "Mở khóa tài khoản";
+    ViewData["Title"] = "Xác nhận " + actionTitle.ToLowerInvariant();
+}
+
+<div class="admin-users">
+    <a asp-area="Admin" asp-controller="Users" asp-action="Details" asp-route-id="@Model.User.Id" asp-route-search="@Model.Search" asp-route-page="@Model.Page" class="admin-users-back"><span aria-hidden="true">←</span> Chi tiết khách hàng</a>
+    <div class="admin-page-heading admin-users-heading">
+        <div>
+            <p class="admin-eyebrow">XÁC NHẬN THAO TÁC</p>
+            <h1>@actionTitle</h1>
+            <p class="admin-page-description">Kiểm tra đúng tài khoản trước khi tiếp tục.</p>
+        </div>
+    </div>
+
+    @if (TempData["ErrorMessage"] is string error)
+    {
+        <div class="admin-users-alert is-error" role="alert">@error</div>
+    }
+
+    <section class="admin-users-confirm-card" aria-labelledby="user-confirm-title">
+        <span class="admin-users-confirm-icon" aria-hidden="true"><svg class="admin-icon"><use href="#admin-shield"></use></svg></span>
+        <p class="admin-eyebrow">@(isLock ? "TẠM NGỪNG TRUY CẬP" : "KHÔI PHỤC TRUY CẬP")</p>
+        <h2 id="user-confirm-title">Bạn muốn @(isLock ? "khóa" : "mở khóa") tài khoản này?</h2>
+        <div class="admin-users-confirm-target">
+            <span>TÀI KHOẢN ĐƯỢC CHỌN</span>
+            <strong>@Model.User.Email</strong>
+            <p>@(string.IsNullOrWhiteSpace(Model.User.FullName) ? "Chưa cập nhật họ tên" : Model.User.FullName)</p>
+            <small>Trạng thái hiện tại: @Model.User.StatusText</small>
+        </div>
+        @if (isLock)
+        {
+            <p class="admin-users-confirm-description">Tài khoản sẽ bị khóa thủ công, không thể đăng nhập mới cho đến khi được mở khóa. Phiên đang đăng nhập có thể tiếp tục truy cập tới lần kiểm tra phiên kế tiếp (chu kỳ 5 phút).</p>
+        }
+        else
+        {
+            <p class="admin-users-confirm-description">Trạng thái khóa và số lần đăng nhập sai sẽ được đặt lại. Khách hàng có thể đăng nhập bằng mật khẩu hiện tại; phiên đăng nhập đã bị vô hiệu hóa sẽ không được khôi phục.</p>
+        }
+        <p class="admin-users-confirm-note">Mật khẩu và các vai trò hiện có của tài khoản được giữ nguyên.</p>
+        <form asp-area="Admin" asp-controller="Users" asp-action="@actionName" asp-route-id="@Model.User.Id" method="post" class="admin-users-confirm-form">
+            <input type="hidden" name="confirmation" value="@Model.Confirmation" />
+            <input type="hidden" name="search" value="@Model.Search" />
+            <input type="hidden" name="page" value="@Model.Page" />
+            <button type="submit" class="admin-users-button is-primary">Xác nhận @(isLock ? "khóa tài khoản" : "mở khóa tài khoản")</button>
+            <a asp-area="Admin" asp-controller="Users" asp-action="Details" asp-route-id="@Model.User.Id" asp-route-search="@Model.Search" asp-route-page="@Model.Page" class="admin-users-button is-secondary">Hủy, quay lại</a>
+        </form>
+    </section>
+</div>

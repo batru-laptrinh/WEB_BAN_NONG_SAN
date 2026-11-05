@@ -1,8 +1,10 @@
 @{
     var adminName = User.Identity?.Name ?? "Quản trị viên";
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var isDashboard = string.Equals(currentController, "Dashboard", StringComparison.OrdinalIgnoreCase);
+    var isUsers = string.Equals(currentController, "Users", StringComparison.OrdinalIgnoreCase);
     var upcomingItems = new[]
     {
-        (Icon: "users", Label: "Quản lý khách hàng"),
         (Icon: "folder", Label: "Quản lý danh mục"),
         (Icon: "box", Label: "Quản lý sản phẩm"),
         (Icon: "warehouse", Label: "Quản lý kho hàng"),
@@ -37,10 +39,21 @@
             <div class="offcanvas-body">
                 <p class="admin-nav-heading">KHÔNG GIAN LÀM VIỆC</p>
                 <nav aria-label="Menu quản trị" class="admin-nav">
-                    <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="admin-nav-item is-active" aria-current="page">
+                    <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="admin-nav-item @(isDashboard ? "is-active" : "")" aria-current="@(isDashboard ? "page" : null)">
                         <svg class="admin-icon" aria-hidden="true"><use href="#admin-grid"></use></svg>
                         <span>Tổng quan</span>
-                        <span class="admin-current-dot" aria-hidden="true"></span>
+                        @if (isDashboard)
+                        {
+                            <span class="admin-current-dot" aria-hidden="true"></span>
+                        }
+                    </a>
+                    <a asp-area="Admin" asp-controller="Users" asp-action="Index" class="admin-nav-item @(isUsers ? "is-active" : "")" aria-current="@(isUsers ? "page" : null)">
+                        <svg class="admin-icon" aria-hidden="true"><use href="#admin-users"></use></svg>
+                        <span>Quản lý khách hàng</span>
+                        @if (isUsers)
+                        {
+                            <span class="admin-current-dot" aria-hidden="true"></span>
+                        }
                     </a>
                     @foreach (var item in upcomingItems)
                     {

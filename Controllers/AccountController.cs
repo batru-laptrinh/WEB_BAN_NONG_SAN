@@ -173,7 +173,7 @@ namespace WEB_BAN_NONG_SAN.Controllers
             {
                 ModelState.AddModelError(
                     "",
-                    "Tài khoản tạm thời bị khóa do đăng nhập sai nhiều lần.");
+                    "Tài khoản đang bị khóa. Vui lòng thử lại sau hoặc liên hệ quản trị viên.");
 
                 return View(model);
             }
@@ -244,6 +244,14 @@ namespace WEB_BAN_NONG_SAN.Controllers
 
             if (user == null)
             {
+                return Challenge();
+            }
+
+            // Cookie cũ có thể còn trong chu kỳ kiểm tra stamp. Không cho tài khoản
+            // đang khóa đổi mật khẩu rồi làm mới cookie bằng stamp hiện tại.
+            if (await _userManager.IsLockedOutAsync(user))
+            {
+                await _signInManager.SignOutAsync();
                 return Challenge();
             }
 

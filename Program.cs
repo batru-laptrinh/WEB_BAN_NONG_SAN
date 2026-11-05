@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using WEB_BAN_NONG_SAN.Data;
 using WEB_BAN_NONG_SAN.Models;
 using WEB_BAN_NONG_SAN.Tools;
+using WEB_BAN_NONG_SAN.Services.Admin;
 
 if (FirstAdminCommand.IsRequested(args))
 {
@@ -15,6 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+builder.Services.AddScoped<AdminUserService>();
 
 var connectionString = builder.Configuration
     .GetConnectionString("DefaultConnection")
@@ -40,6 +42,11 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
+
+// Administrative lock/unlock rotates the stamp. Existing cookies are checked
+// on their next request after this interval, not immediately on every session.
+builder.Services.Configure<SecurityStampValidatorOptions>(options =>
+    options.ValidationInterval = TimeSpan.FromMinutes(5));
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
