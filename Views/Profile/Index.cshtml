@@ -1,118 +1,20 @@
-
 @model WEB_BAN_NONG_SAN.ViewModels.ProfileViewModel
-
-@{
-    ViewData["Title"] = "Thông tin cá nhân";
-}
-
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-7">
-
-            <div class="card border-0 shadow-sm rounded-4">
-                <div class="card-body p-4 p-md-5">
-
-                    <h2 class="text-center text-success fw-bold mb-3">
-                        Thông tin cá nhân
-                    </h2>
-
-                    <p class="text-center text-muted mb-4">
-                        Quản lý thông tin tài khoản của bạn
-                    </p>
-
-                    @if (TempData["SuccessMessage"] != null)
-                    {
-                        <div class="alert alert-success" role="alert">
-                            @TempData["SuccessMessage"]
-                        </div>
-                    }
-
-                    <form asp-controller="Profile"
-                          asp-action="Index"
-                          method="post">
-
-                        <div asp-validation-summary="ModelOnly"
-                             class="text-danger mb-3"></div>
-
-                        <!-- Họ và tên -->
-                        <div class="mb-3">
-                            <label asp-for="FullName"
-                                   class="form-label fw-semibold">
-                            </label>
-
-                            <input asp-for="FullName"
-                                   class="form-control"
-                                   autocomplete="name" />
-
-                            <span asp-validation-for="FullName"
-                                  class="text-danger small"></span>
-                        </div>
-
-                        <!-- Email chỉ hiển thị -->
-                        <div class="mb-3">
-                            <label asp-for="Email"
-                                   class="form-label fw-semibold">
-                                Email
-                            </label>
-
-                            <input asp-for="Email"
-                                   class="form-control bg-light"
-                                   readonly />
-
-                            <small class="text-muted">
-                                Email không thể thay đổi tại đây.
-                            </small>
-                        </div>
-
-                        <!-- Số điện thoại -->
-                        <div class="mb-4">
-                            <label asp-for="PhoneNumber"
-                                   class="form-label fw-semibold">
-                            </label>
-
-                            <input asp-for="PhoneNumber"
-                                   type="tel"
-                                   class="form-control"
-                                   placeholder="Nhập số điện thoại"
-                                   autocomplete="tel" />
-
-                            <span asp-validation-for="PhoneNumber"
-                                  class="text-danger small"></span>
-                        </div>
-
-                        <!-- Lưu thay đổi -->
-                        <button type="submit"
-                                class="btn btn-success w-100 py-2 fw-semibold">
-                            Lưu thay đổi
-                        </button>
-
-                    </form>
-
-                    <hr class="my-4" />
-
-                    <div class="text-center">
-                        <a asp-controller="Account"
-                           asp-action="ChangePassword"
-                           class="text-success text-decoration-none fw-semibold">
-                            Đổi mật khẩu
-                        </a>
-                    </div>
-
-                    <div class="text-center mt-3">
-                        <a asp-controller="Home"
-                           asp-action="Index"
-                           class="text-secondary text-decoration-none">
-                            Quay về trang chủ
-                        </a>
-                    </div>
-
-                </div>
-            </div>
-
+@{ ViewData["Title"] = "Thông tin cá nhân"; }
+<nav class="store-breadcrumb" aria-label="Đường dẫn"><a asp-controller="Home" asp-action="Index">Trang chủ</a><span aria-hidden="true">/</span><span aria-current="page">Tài khoản</span></nav>
+<section class="account-shell">
+    <aside class="account-sidebar"><p class="account-eyebrow">KHÔNG GIAN CỦA BẠN</p><h2>Tài khoản</h2><p>Quản lý thông tin và những đơn mua trong cùng một nơi.</p><nav class="account-navigation" aria-label="Điều hướng tài khoản"><a asp-controller="Profile" asp-action="Index" class="is-active" aria-current="page">Hồ sơ cá nhân <span aria-hidden="true">→</span></a><a asp-controller="Addresses" asp-action="Index">Địa chỉ giao hàng <span aria-hidden="true">→</span></a><a asp-controller="Orders" asp-action="Index">Đơn hàng của tôi <span aria-hidden="true">→</span></a><a asp-controller="Account" asp-action="ChangePassword" >Đổi mật khẩu <span aria-hidden="true">→</span></a></nav><div class="account-sidebar-note"><strong>Tiếp tục chọn nông sản</strong><p>Khám phá những sản phẩm đang có tại cửa hàng.</p><a asp-controller="Catalog" asp-action="Index">Đến cửa hàng →</a></div></aside>
+    <div class="account-content"><header class="account-content-heading"><p class="account-eyebrow">HỒ SƠ CỦA BẠN</p><h1>Thông tin cá nhân</h1><p>Cập nhật thông tin để cửa hàng có thể liên hệ khi cần xử lý đơn mua.</p></header>
+        <div class="account-panel">
+            @if (TempData["SuccessMessage"] != null) { <div class="alert alert-success" role="status">@TempData["SuccessMessage"]</div> }
+            <form asp-controller="Profile" asp-action="Index" method="post" class="account-form">
+                <div asp-validation-summary="ModelOnly" class="account-validation" role="alert"></div>
+            <div class="account-field"><label asp-for="FullName">Họ và tên</label><input asp-for="FullName" type="text" autocomplete="name" placeholder="Nhập họ và tên" class="form-control" /><span asp-validation-for="FullName" class="field-validation-text"></span></div>
+                <div class="account-field"><label asp-for="Email">Email</label><input asp-for="Email" type="email" class="form-control account-readonly" readonly aria-describedby="profile-email-note" /><small id="profile-email-note">Email không thể thay đổi tại đây.</small></div>
+            <div class="account-field"><label asp-for="PhoneNumber">Số điện thoại</label><input asp-for="PhoneNumber" type="tel" autocomplete="tel" placeholder="Nhập số điện thoại" class="form-control" /><span asp-validation-for="PhoneNumber" class="field-validation-text"></span></div>
+                <div class="account-panel-actions"><button type="submit" class="store-button">Lưu thay đổi</button><a asp-controller="Home" asp-action="Index">Quay về trang chủ</a></div>
+            </form>
         </div>
+        <div class="account-quick-links"><a asp-controller="Addresses" asp-action="Index"><span class="account-quick-label">NƠI NHẬN HÀNG</span><strong>Địa chỉ giao hàng</strong><span>Thêm, sửa và chọn địa chỉ mặc định →</span></a><a asp-controller="Cart" asp-action="Index"><span class="account-quick-label">MUA SẮM CỦA BẠN</span><strong>Giỏ hàng</strong><span>Xem những sản phẩm đang chọn →</span></a></div>
     </div>
-</div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+</section>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

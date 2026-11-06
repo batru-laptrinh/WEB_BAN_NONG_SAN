@@ -1,0 +1,30 @@
+@model CatalogAdminCategoryList
+@{ ViewData["Title"] = "Quản lý danh mục"; }
+<div class="commerce admin-users">
+    <div class="admin-page-heading"><div><p class="admin-eyebrow">SẢN PHẨM & DANH MỤC</p><h1>Danh mục nông sản</h1><p class="admin-page-description">Sắp xếp sản phẩm theo nhóm. Ngừng sử dụng danh mục thay vì xóa dữ liệu liên quan.</p></div><a asp-action="Create" class="admin-users-button is-primary">Thêm danh mục</a></div>
+    @if (TempData["SuccessMessage"] is string success) { <div class="admin-users-alert is-success" role="status">@success</div> }
+    @if (TempData["ErrorMessage"] is string error) { <div class="admin-users-alert is-error" role="alert">@error</div> }
+    <section class="admin-users-directory">
+        <form asp-action="Index" method="get" class="admin-users-search-form p-3" role="search">
+            <div class="admin-users-search-field"><label for="category-search">Tìm danh mục</label><input id="category-search" name="search" value="@Model.Search" maxlength="100" class="form-control" placeholder="Tên danh mục" /></div>
+            <button class="admin-users-button is-primary">Tìm kiếm</button>
+            @if (Model.Search != null) { <a asp-action="Index" class="admin-users-reset">Xóa bộ lọc</a> }
+        </form>
+        @if (!Model.IsDataAvailable) { <div class="admin-users-empty" role="status"><h2>Chưa tải được danh mục</h2><p>Vui lòng thử lại sau.</p><a asp-action="Index">Tải lại</a></div> }
+        else if (Model.Items.Count == 0) { <div class="admin-users-empty"><h2>Chưa có danh mục phù hợp</h2><p>Thêm danh mục đầu tiên hoặc thay đổi từ khóa tìm kiếm.</p></div> }
+        else
+        {
+            <table class="admin-users-table"><caption class="visually-hidden">Danh sách danh mục nông sản</caption><thead><tr><th>Tên danh mục</th><th>Mô tả</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr data-category-id="@item.Id"><td data-label="Tên danh mục"><strong>@item.Name</strong></td><td data-label="Mô tả">@(item.Description ?? "Chưa có mô tả")</td><td data-label="Trạng thái">@(item.IsActive ? "Đang sử dụng" : "Đã ngừng sử dụng")</td><td data-label="Thao tác"><a asp-action="Edit" asp-route-id="@item.Id" class="admin-users-action">Chỉnh sửa</a></td></tr>
+            }
+            </tbody></table>
+            <div class="admin-users-pagination"><p>@Model.TotalCount danh mục</p><nav aria-label="Phân trang danh mục">
+                @if (Model.Page > 1) { <a asp-action="Index" asp-route-search="@Model.Search" asp-route-page="@(Model.Page - 1)" class="admin-users-page-link">Trang trước</a> }
+                <span class="admin-users-page-current">@Model.Page / @Model.TotalPages</span>
+                @if (Model.Page < Model.TotalPages) { <a asp-action="Index" asp-route-search="@Model.Search" asp-route-page="@(Model.Page + 1)" class="admin-users-page-link">Trang sau</a> }
+            </nav></div>
+        }
+    </section>
+</div>

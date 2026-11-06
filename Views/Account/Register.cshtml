@@ -1,115 +1,24 @@
-
 @model WEB_BAN_NONG_SAN.ViewModels.RegisterViewModel
-
-@{
-    ViewData["Title"] = "Đăng ký tài khoản";
-}
-
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-
-            <div class="card shadow-sm border-0 rounded-4">
-                <div class="card-body p-4 p-md-5">
-
-                    <h2 class="text-center text-success fw-bold mb-2">
-                        Đăng ký tài khoản
-                    </h2>
-
-                    <p class="text-center text-muted mb-4">
-                        Chào mừng bạn đến với Nông Sản Sạch!
-                    </p>
-
-                    <form asp-controller="Account"
-                          asp-action="Register"
-                          method="post">
-
-                        <div asp-validation-summary="ModelOnly"
-                             class="text-danger mb-3"></div>
-
-                        <div class="mb-3">
-                            <label asp-for="FullName"
-                                   class="form-label fw-semibold">
-                                Họ và tên
-                            </label>
-
-                            <input asp-for="FullName"
-                                   class="form-control"
-                                   placeholder="Nhập họ và tên"
-                                   autocomplete="name" />
-
-                            <span asp-validation-for="FullName"
-                                  class="text-danger small"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Email"
-                                   class="form-label fw-semibold">
-                                Email
-                            </label>
-
-                            <input asp-for="Email"
-                                   class="form-control"
-                                   placeholder="Nhập email"
-                                   autocomplete="email" />
-
-                            <span asp-validation-for="Email"
-                                  class="text-danger small"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label asp-for="Password"
-                                   class="form-label fw-semibold">
-                                Mật khẩu
-                            </label>
-
-                            <input asp-for="Password"
-                                   class="form-control"
-                                   placeholder="Nhập mật khẩu"
-                                   autocomplete="new-password" />
-
-                            <span asp-validation-for="Password"
-                                  class="text-danger small"></span>
-                        </div>
-
-                        <div class="mb-4">
-                            <label asp-for="ConfirmPassword"
-                                   class="form-label fw-semibold">
-                                Xác nhận mật khẩu
-                            </label>
-
-                            <input asp-for="ConfirmPassword"
-                                   class="form-control"
-                                   placeholder="Nhập lại mật khẩu"
-                                   autocomplete="new-password" />
-
-                            <span asp-validation-for="ConfirmPassword"
-                                  class="text-danger small"></span>
-                        </div>
-
-                        <button type="submit"
-                                class="btn btn-success w-100 py-2 fw-semibold">
-                            Đăng ký
-                        </button>
-
-                    </form>
-
-                    <p class="text-center mt-4 mb-0">
-                        Đã có tài khoản?
-                        <a asp-controller="Account"
-                           asp-action="Login"
-                           class="text-success fw-semibold">
-                            Đăng nhập
-                        </a>
-                    </p>
-
-                </div>
-            </div>
-
-        </div>
+@{ ViewData["Title"] = "Đăng ký tài khoản"; }
+<section class="auth-shell">
+    <aside class="auth-intro" aria-label="Mua sắm tại Nông Sản">
+        <div class="auth-intro-copy"><p class="account-eyebrow">CHO BỮA ĂN MỖI NGÀY</p><h2>Mua sắm gọn gàng.<br />Bữa cơm thêm đủ đầy.</h2><p>Lưu địa chỉ nhận hàng, chọn nông sản và theo dõi đơn mua trong cùng một tài khoản.</p></div>
+        <img class="auth-produce-photo" src="~/images/agriculture-harvest.webp" alt="Rau củ và trái cây tươi, hình ảnh minh họa nông sản" width="720" height="800" loading="lazy" />
+        <div class="auth-intro-bottom"><span>Thông tin sản phẩm rõ ràng</span><span>Thanh toán khi nhận hàng</span></div>
+    </aside>
+    <div class="auth-card">
+        <a class="auth-brand-link" asp-controller="Home" asp-action="Index" aria-label="Về trang chủ Nông Sản"><partial name="_Brand" /></a>
+        <p class="account-eyebrow">TÀI KHOẢN CỦA BẠN</p><h1>Đăng ký tài khoản</h1><p class="account-description">Tạo tài khoản để lưu địa chỉ, đặt hàng và theo dõi những đơn mua của bạn.</p>
+        <form asp-controller="Account" asp-action="Register" method="post" class="account-form">
+            <div asp-validation-summary="ModelOnly" class="account-validation" role="alert"></div>
+            <div class="account-field"><label asp-for="FullName">Họ và tên</label><input asp-for="FullName" type="text" autocomplete="name" placeholder="Nhập họ và tên" class="form-control" /><span asp-validation-for="FullName" class="field-validation-text"></span></div>
+            <div class="account-field"><label asp-for="Email">Email</label><input asp-for="Email" type="email" autocomplete="email" placeholder="ban@example.com" class="form-control" /><span asp-validation-for="Email" class="field-validation-text"></span></div>
+            <div class="account-field"><label asp-for="Password">Mật khẩu</label><input asp-for="Password" type="password" autocomplete="new-password" placeholder="Tạo mật khẩu" class="form-control" /><span asp-validation-for="Password" class="field-validation-text"></span></div>
+            <div class="account-field"><label asp-for="ConfirmPassword">Xác nhận mật khẩu</label><input asp-for="ConfirmPassword" type="password" autocomplete="new-password" placeholder="Nhập lại mật khẩu" class="form-control" /><span asp-validation-for="ConfirmPassword" class="field-validation-text"></span></div>
+            <p class="account-help">Mật khẩu có ít nhất 8 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt.</p>
+            <button type="submit" class="store-button account-submit">Đăng ký <span aria-hidden="true">→</span></button>
+        </form>
+        <p class="account-footer-link">Đã có tài khoản? <a asp-controller="Account" asp-action="Login">Đăng nhập</a></p>
     </div>
-</div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+</section>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

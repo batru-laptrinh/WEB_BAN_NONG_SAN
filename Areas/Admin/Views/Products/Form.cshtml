@@ -1,0 +1,25 @@
+@model CatalogAdminProductForm
+@{ var editing = Model.Id > 0; ViewData["Title"] = editing ? "Chỉnh sửa sản phẩm" : "Thêm sản phẩm"; }
+<div class="commerce admin-users">
+    <div class="admin-page-heading"><div><p class="admin-eyebrow">SẢN PHẨM NÔNG SẢN</p><h1>@ViewData["Title"]</h1><p class="admin-page-description">Giá và tồn kho được kiểm tra lại khi khách hàng đặt hàng.</p></div></div>
+    <section class="admin-users-directory p-4">
+        <form asp-action="@(editing ? "Edit" : "Create")" asp-route-id="@(editing ? Model.Id : (int?)null)" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            @if (editing) { <input asp-for="Version" type="hidden" /> }
+            <div class="row g-3">
+                <div class="col-md-8"><label asp-for="Name" class="form-label"></label><input asp-for="Name" class="form-control" maxlength="150" /><span asp-validation-for="Name" class="text-danger"></span></div>
+                <div class="col-md-4"><label asp-for="CategoryId" class="form-label"></label><select asp-for="CategoryId" asp-items="Model.Categories" class="form-select"><option value="">Chọn danh mục đang sử dụng</option></select><span asp-validation-for="CategoryId" class="text-danger"></span></div>
+                <div class="col-md-4"><label asp-for="Price" class="form-label"></label><input asp-for="Price" class="form-control" type="number" min="0.01" max="1000000000" step="0.01" inputmode="decimal" /><span asp-validation-for="Price" class="text-danger"></span></div>
+                <div class="col-md-4"><label asp-for="Unit" class="form-label"></label><input asp-for="Unit" class="form-control" maxlength="30" placeholder="kg, gói, bó, hộp…" /><span asp-validation-for="Unit" class="text-danger"></span></div>
+                <div class="col-md-4"><label asp-for="Stock" class="form-label"></label><input asp-for="Stock" class="form-control" type="number" min="0" max="1000000" /><span asp-validation-for="Stock" class="text-danger"></span></div>
+                <div class="col-12"><label asp-for="Description" class="form-label"></label><textarea asp-for="Description" class="form-control" rows="6" maxlength="4000"></textarea><span asp-validation-for="Description" class="text-danger"></span></div>
+                <div class="col-12"><label asp-for="Image" class="form-label"></label><input asp-for="Image" type="file" accept="image/png" class="form-control" aria-describedby="product-image-help" /><span asp-validation-for="Image" class="text-danger"></span><p id="product-image-help" class="text-muted mt-2">PNG RGB/RGBA 8-bit, không xen kẽ; tối đa 2 MB và 2048 × 2048 pixel. Để trống để giữ ảnh hiện có. Có thể xuất ảnh từ ứng dụng chỉnh sửa ảnh sang PNG thông thường.</p>
+                    @if (Model.CurrentImagePath != null) { <img src="@Model.CurrentImagePath" alt="Ảnh sản phẩm hiện tại" width="160" height="160" style="object-fit:cover;border-radius:12px;max-width:100%" /> }
+                </div>
+                <div class="col-12 d-flex flex-wrap gap-4"><div class="form-check"><input asp-for="IsActive" class="form-check-input" /><label asp-for="IsActive" class="form-check-label"></label></div><div class="form-check"><input asp-for="IsFeatured" class="form-check-input" /><label asp-for="IsFeatured" class="form-check-label"></label></div></div>
+                <div class="col-12"><p class="text-muted">Sản phẩm hết hàng hoặc ngừng bán không nhận đơn mới. Chỉnh sửa tồn kho sẽ bị từ chối nếu một phiên khác hoặc đơn đặt hàng đã thay đổi sản phẩm trước khi bạn lưu.</p></div>
+                <div class="col-12 d-flex flex-wrap gap-2"><button class="admin-users-button is-primary">Lưu sản phẩm</button><a asp-action="Index" class="admin-users-button is-secondary">Quay lại</a></div>
+            </div>
+        </form>
+    </section>
+</div>

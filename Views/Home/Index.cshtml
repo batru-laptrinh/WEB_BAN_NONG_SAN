@@ -1,8 +1,63 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@model WEB_BAN_NONG_SAN.ViewModels.CatalogHomeViewModel
+@{ ViewData["Title"] = "Nông sản tươi mỗi ngày"; }
+<section class="store-hero" aria-labelledby="hero-title">
+    <div class="store-hero-copy">
+        <p class="store-eyebrow"><span class="store-live-dot" aria-hidden="true"></span>RAU CỦ · TRÁI CÂY · NÔNG SẢN VIỆT</p>
+        <h1 id="hero-title">Nông sản tươi<br /><span>mỗi ngày.</span></h1>
+        <p>Rau củ, trái cây và những sản phẩm nông sản cho bữa ăn gia đình.</p>
+        <a class="store-button" asp-controller="Catalog" asp-action="Index">Khám phá sản phẩm <svg class="store-icon" aria-hidden="true"><use href="#store-arrow-icon"></use></svg></a>
+        <div class="store-hero-benefits"><span><svg class="store-icon" aria-hidden="true"><use href="#store-check-icon"></use></svg>Thông tin rõ ràng</span><span><svg class="store-icon" aria-hidden="true"><use href="#store-card-icon"></use></svg>Thanh toán COD</span></div>
+    </div>
+    <figure class="store-hero-photo">
+        <img src="~/images/agriculture-harvest.webp" alt="Giỏ rau xanh, củ quả và trái cây — ảnh minh họa nông sản" width="1536" height="1024" fetchpriority="high" />
+        <figcaption><span>Gợi ý cho bữa cơm nhà</span><small>Ảnh minh họa</small></figcaption>
+    </figure>
+</section>
+@if (!Model.IsDataAvailable)
+{
+    <div class="store-empty" role="status"><h2>Chưa thể tải cửa hàng</h2><p>Vui lòng thử lại sau. Chúng tôi chưa thể xác nhận thông tin sản phẩm lúc này.</p><a class="store-button store-button-outline" asp-action="Index">Tải lại trang</a></div>
 }
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+else
+{
+    <section class="store-section" aria-labelledby="categories-title" id="danh-muc-nong-san">
+        <div class="store-section-heading"><div><p class="store-eyebrow">TÌM ĐIỀU BẠN CẦN</p><h2 id="categories-title">Danh mục nông sản</h2></div><a asp-controller="Catalog" asp-action="Index" asp-fragment="catalog-category">Tất cả danh mục <span aria-hidden="true">→</span></a></div>
+        @if (Model.Categories.Count > 0)
+        {
+            <div class="store-categories">@foreach (var category in Model.Categories)
+            {
+                <a asp-controller="Catalog" asp-action="Index" asp-route-categoryId="@category.Id"><span class="store-category-symbol"><svg class="store-icon" aria-hidden="true"><use href="#store-basket-icon"></use></svg></span><strong>@category.Name</strong><span class="store-category-arrow" aria-hidden="true">→</span></a>
+            }</div>
+        }
+        else
+        {
+            <div class="store-inline-empty"><svg class="store-icon" aria-hidden="true"><use href="#store-basket-icon"></use></svg><div><h3>Danh mục đang được cập nhật</h3><p>Các nhóm nông sản sẽ xuất hiện tại đây khi cửa hàng sẵn sàng.</p></div>@if (User.IsInRole("Admin")) { <a class="store-button store-button-outline" asp-area="Admin" asp-controller="Categories" asp-action="Create">Thêm danh mục</a> }</div>
+        }
+    </section>
+    @if (Model.FeaturedProducts.Count > 0)
+    {
+        var featuredData = new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["ShowFeaturedBadge"] = true };
+        <section class="store-section" aria-labelledby="featured-title">
+            <div class="store-section-heading"><div><p class="store-eyebrow">LỰA CHỌN TỪ CỬA HÀNG</p><h2 id="featured-title">Nông sản nổi bật</h2></div><a asp-controller="Catalog" asp-action="Index">Xem tất cả sản phẩm <span aria-hidden="true">→</span></a></div>
+            <div class="store-product-grid">@foreach (var product in Model.FeaturedProducts) { <partial name="~/Views/Catalog/_ProductCard.cshtml" model="product" view-data="featuredData" /> }</div>
+        </section>
+    }
+}
+<section class="store-shopping-guide" aria-labelledby="guide-title" id="huong-dan-mua-hang">
+    <div class="store-guide-intro"><p class="store-eyebrow">ĐƠN GIẢN TỪ LỰA CHỌN ĐẾN ĐẶT HÀNG</p><h2 id="guide-title">Bữa ăn mỗi ngày,<br />mua sắm thật dễ.</h2><p>Thông tin sản phẩm, giá và đơn vị tính được hiển thị rõ ràng để bạn chọn theo nhu cầu.</p></div>
+    <ol class="store-guide-steps"><li><span><svg class="store-icon" aria-hidden="true"><use href="#store-basket-icon"></use></svg></span><div><h3>Chọn nông sản</h3><p>Xem sản phẩm và số lượng còn hàng, thêm vào giỏ.</p></div></li><li><span><svg class="store-icon" aria-hidden="true"><use href="#store-box-icon"></use></svg></span><div><h3>Xác nhận đơn hàng</h3><p>Đăng nhập, chọn địa chỉ và kiểm tra tổng thanh toán.</p></div></li><li><span><svg class="store-icon" aria-hidden="true"><use href="#store-card-icon"></use></svg></span><div><h3>Thanh toán khi nhận</h3><p>Đặt đơn COD và theo dõi trạng thái trong tài khoản.</p></div></li></ol>
+</section>
+@if (Model.IsDataAvailable)
+{
+    <section class="store-section" aria-labelledby="new-title">
+        <div class="store-section-heading"><div><p class="store-eyebrow">THÊM LỰA CHỌN CHO CĂN BẾP</p><h2 id="new-title">Sản phẩm mới về</h2></div><a asp-controller="Catalog" asp-action="Index">Khám phá cửa hàng <span aria-hidden="true">→</span></a></div>
+        @if (Model.NewProducts.Count == 0)
+        {
+            <div class="store-inline-empty store-product-empty"><img src="~/images/agriculture-harvest.webp" alt="Ảnh minh họa rau củ và trái cây" width="140" height="110" loading="lazy" /><div><h3>Cửa hàng đang chuẩn bị sản phẩm</h3><p>Chưa có sản phẩm đang bán. Hãy quay lại sau để xem danh mục mới.</p>@if (User.IsInRole("Admin")) { <a asp-area="Admin" asp-controller="Products" asp-action="Create">Thêm sản phẩm cho cửa hàng →</a> }</div></div>
+        }
+        else { <div class="store-product-grid">@foreach (var product in Model.NewProducts) { <partial name="~/Views/Catalog/_ProductCard.cshtml" model="product" /> }</div> }
+    </section>
+}
+<section class="store-story" aria-labelledby="story-title">
+    <figure><img src="~/images/agriculture-field.webp" alt="Rau xanh và cảnh đồng ruộng — ảnh minh họa nông nghiệp Việt Nam" width="1536" height="1024" loading="lazy" /><figcaption>Ảnh minh họa nông nghiệp</figcaption></figure>
+    <div class="store-story-copy"><p class="store-eyebrow">GẦN GŨI NHỮNG ĐIỀU THÂN QUEN</p><h2 id="story-title">Từ nông sản Việt<br />đến bữa cơm gia đình.</h2><p>Một giỏ rau, vài loại trái cây, thêm lựa chọn cho bữa ăn hằng ngày. Khám phá những sản phẩm đang có tại cửa hàng và tìm món phù hợp cho căn bếp của bạn.</p><a class="store-button store-button-outline" asp-controller="Catalog" asp-action="Index">Chọn nông sản hôm nay <svg class="store-icon" aria-hidden="true"><use href="#store-arrow-icon"></use></svg></a></div>
+</section>

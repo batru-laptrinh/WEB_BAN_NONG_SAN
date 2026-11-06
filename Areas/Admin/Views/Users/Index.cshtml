@@ -1,0 +1,142 @@
+@model AdminUserListViewModel
+@{
+    ViewData["Title"] = "Quản lý khách hàng";
+    var hasSearch = !string.IsNullOrWhiteSpace(Model.Search);
+    var firstResult = (Model.Page - 1) * Model.PageSize + 1;
+    var lastResult = Math.Min(Model.Page * Model.PageSize, Model.TotalCount);
+}
+
+<div class="admin-users">
+    <div class="admin-page-heading admin-users-heading">
+        <div>
+            <p class="admin-eyebrow">QUẢN LÝ TÀI KHOẢN</p>
+            <h1>Khách hàng</h1>
+            <p class="admin-page-description">Tra cứu tài khoản và quản lý quyền truy cập của khách hàng.</p>
+        </div>
+        <span class="admin-users-heading-icon" aria-hidden="true"><svg class="admin-icon"><use href="#admin-users"></use></svg></span>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string success)
+    {
+        <div class="admin-users-alert is-success" role="status">@success</div>
+    }
+    @if (TempData["ErrorMessage"] is string error)
+    {
+        <div class="admin-users-alert is-error" role="alert">@error</div>
+    }
+
+    <section class="admin-users-directory" aria-labelledby="users-directory-title">
+        <div class="admin-users-toolbar">
+            <div class="admin-users-section-title">
+                <span class="admin-eyebrow">DANH BẠ KHÁCH HÀNG</span>
+                <h2 id="users-directory-title">Danh sách tài khoản</h2>
+                <p>Hiển thị tài khoản có vai trò Customer, bao gồm tài khoản có thêm vai trò Admin.</p>
+            </div>
+            <form asp-area="Admin" asp-controller="Users" asp-action="Index" method="get" class="admin-users-search-form" role="search">
+                <div class="admin-users-search-field">
+                    <label for="users-search">Tìm khách hàng</label>
+                    <div class="admin-users-search-input">
+                        <svg class="admin-icon" aria-hidden="true"><use href="#admin-user"></use></svg>
+                        <input type="search" id="users-search" name="search" value="@Model.Search" maxlength="100" placeholder="Tên, email hoặc số điện thoại" />
+                    </div>
+                </div>
+                <button type="submit" class="admin-users-button is-primary">Tìm kiếm</button>
+                @if (hasSearch)
+                {
+                    <a asp-area="Admin" asp-controller="Users" asp-action="Index" class="admin-users-reset">Xóa bộ lọc</a>
+                }
+            </form>
+        </div>
+
+        @if (!Model.IsDataAvailable)
+        {
+            <div class="admin-users-empty is-unavailable" role="status">
+                <span class="admin-users-empty-icon"><svg class="admin-icon" aria-hidden="true"><use href="#admin-shield"></use></svg></span>
+                <h3>Chưa tải được danh sách khách hàng</h3>
+                <p>Vui lòng thử tải lại sau để xem dữ liệu tài khoản hiện tại.</p>
+                <a asp-area="Admin" asp-controller="Users" asp-action="Index" asp-route-search="@Model.Search" asp-route-page="@Model.Page" class="admin-users-button is-secondary">Thử tải lại</a>
+            </div>
+        }
+        else
+        {
+            <div class="admin-users-results" aria-live="polite">
+                <span><strong>@Model.TotalCount.ToString("N0", CultureInfo.GetCultureInfo("vi-VN"))</strong> @(hasSearch ? "kết quả tìm kiếm" : "tài khoản khách hàng")</span>
+                <span>@Model.PageSize tài khoản / trang</span>
+            </div>
+            @if (Model.Items.Count == 0)
+            {
+                <div class="admin-users-empty">
+                    <span class="admin-users-empty-icon"><svg class="admin-icon" aria-hidden="true"><use href="#admin-users"></use></svg></span>
+                    <h3>@(hasSearch ? "Không tìm thấy khách hàng phù hợp" : "Chưa có tài khoản khách hàng")</h3>
+                    <p>@(hasSearch ? "Hãy thử tìm bằng tên, email hoặc số điện thoại khác." : "Các tài khoản có vai trò Customer sẽ xuất hiện tại đây.")</p>
+                    @if (hasSearch)
+                    {
+                        <a asp-area="Admin" asp-controller="Users" asp-action="Index" class="admin-users-button is-secondary">Xem tất cả khách hàng</a>
+                    }
+                </div>
+            }
+            else
+            {
+                <table class="admin-users-table" data-testid="users-table">
+                    <caption class="visually-hidden">Danh sách tài khoản khách hàng và thao tác quản lý</caption>
+                    <thead>
+                        <tr><th scope="col">Họ và tên</th><th scope="col">Email</th><th scope="col">Điện thoại</th><th scope="col">Vai trò</th><th scope="col">Trạng thái</th><th scope="col">Thao tác</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model.Items)
+                        {
+                            var statusClass = user.LockoutState switch { AdminUserLockoutState.Manual => "is-manual", AdminUserLockoutState.Temporary => "is-temporary", _ => "is-active" };
+                            <tr data-user-id="@user.Id">
+                                <td data-label="Họ và tên" class="admin-users-name">@(string.IsNullOrWhiteSpace(user.FullName) ? "Chưa cập nhật" : user.FullName)</td>
+                                <td data-label="Email" class="admin-users-email">@user.Email</td>
+                                <td data-label="Điện thoại">@(string.IsNullOrWhiteSpace(user.PhoneNumber) ? "Chưa cập nhật" : user.PhoneNumber)</td>
+                                <td data-label="Vai trò"><div class="admin-users-roles">@foreach (var role in user.Roles) { <span class="admin-users-role">@role</span> }</div></td>
+                                <td data-label="Trạng thái"><span class="admin-users-status @statusClass">@user.StatusText</span></td>
+                                <td data-label="Thao tác">
+                                    <div class="admin-users-actions">
+                                        <a asp-area="Admin" asp-controller="Users" asp-action="Details" asp-route-id="@user.Id" asp-route-search="@Model.Search" asp-route-page="@Model.Page" class="admin-users-action">Chi tiết<span class="visually-hidden"> tài khoản @user.Email</span></a>
+                                        @if (user.CanLock)
+                                        {
+                                            <a asp-area="Admin" asp-controller="Users" asp-action="Confirm" asp-route-id="@user.Id" asp-route-operation="lock" asp-route-search="@Model.Search" asp-route-page="@Model.Page" class="admin-users-action is-lock">Khóa<span class="visually-hidden"> tài khoản @user.Email</span></a>
+                                        }
+                                        @if (user.CanUnlock)
+                                        {
+                                            <a asp-area="Admin" asp-controller="Users" asp-action="Confirm" asp-route-id="@user.Id" asp-route-operation="unlock" asp-route-search="@Model.Search" asp-route-page="@Model.Page" class="admin-users-action">Mở khóa<span class="visually-hidden"> tài khoản @user.Email</span></a>
+                                        }
+                                    </div>
+                                    @if (user.IsAdmin || user.IsSelf)
+                                    {
+                                        <span class="admin-users-protected">@(user.IsAdmin ? "Tài khoản Admin được bảo vệ" : "Tài khoản đang sử dụng")</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="admin-users-pagination">
+                    <p>Hiển thị <strong>@firstResult–@lastResult</strong> trên @Model.TotalCount tài khoản</p>
+                    <nav aria-label="Phân trang khách hàng">
+                        @if (Model.Page > 1)
+                        {
+                            <a asp-area="Admin" asp-controller="Users" asp-action="Index" asp-route-search="@Model.Search" asp-route-page="@(Model.Page - 1)" class="admin-users-page-link" rel="prev">Trang trước</a>
+                        }
+                        else
+                        {
+                            <span class="admin-users-page-link is-disabled" aria-disabled="true">Trang trước</span>
+                        }
+                        <span class="admin-users-page-current" aria-current="page">@Model.Page / @Model.TotalPages</span>
+                        @if (Model.Page < Model.TotalPages)
+                        {
+                            <a asp-area="Admin" asp-controller="Users" asp-action="Index" asp-route-search="@Model.Search" asp-route-page="@(Model.Page + 1)" class="admin-users-page-link" rel="next">Trang sau</a>
+                        }
+                        else
+                        {
+                            <span class="admin-users-page-link is-disabled" aria-disabled="true">Trang sau</span>
+                        }
+                    </nav>
+                </div>
+            }
+        }
+    </section>
+    <p class="admin-users-footnote"><svg class="admin-icon" aria-hidden="true"><use href="#admin-shield"></use></svg><span>Tài khoản Admin và tài khoản đang sử dụng được bảo vệ khỏi thao tác khóa / mở khóa.</span></p>
+</div>

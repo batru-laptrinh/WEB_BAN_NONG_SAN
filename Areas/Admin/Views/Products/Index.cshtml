@@ -1,0 +1,26 @@
+@model CatalogAdminProductList
+@{ ViewData["Title"] = "Quản lý sản phẩm"; }
+<div class="commerce admin-users">
+    <div class="admin-page-heading"><div><p class="admin-eyebrow">DANH MỤC & KHO HÀNG</p><h1>Sản phẩm nông sản</h1><p class="admin-page-description">Quản lý giá bán, đơn vị, hình ảnh và tồn kho thực tế của sản phẩm.</p></div><a asp-action="Create" class="admin-users-button is-primary">Thêm sản phẩm</a></div>
+    @if (TempData["SuccessMessage"] is string success) { <div class="admin-users-alert is-success" role="status">@success</div> }
+    @if (TempData["ErrorMessage"] is string error) { <div class="admin-users-alert is-error" role="alert">@error</div> }
+    <section class="admin-users-directory">
+        <form asp-action="Index" method="get" class="admin-users-search-form p-3" role="search"><div class="admin-users-search-field"><label for="product-search">Tìm sản phẩm</label><input id="product-search" name="search" value="@Model.Search" maxlength="100" class="form-control" placeholder="Tên sản phẩm" /></div><button class="admin-users-button is-primary">Tìm kiếm</button>@if (Model.Search != null) { <a asp-action="Index" class="admin-users-reset">Xóa bộ lọc</a> }</form>
+        @if (!Model.IsDataAvailable) { <div class="admin-users-empty" role="status"><h2>Chưa tải được sản phẩm</h2><p>Vui lòng thử lại sau.</p><a asp-action="Index">Tải lại</a></div> }
+        else if (Model.Items.Count == 0) { <div class="admin-users-empty"><h2>Chưa có sản phẩm phù hợp</h2><p>Hãy thêm sản phẩm hoặc thay đổi từ khóa tìm kiếm.</p></div> }
+        else
+        {
+            <table class="admin-users-table"><caption class="visually-hidden">Sản phẩm, giá bán và tồn kho</caption><thead><tr><th>Sản phẩm</th><th>Danh mục</th><th>Giá / đơn vị</th><th>Tồn kho</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr data-product-id="@item.Id"><td data-label="Sản phẩm"><strong>@item.Name</strong>@if (item.IsFeatured) { <span class="admin-users-role ms-2">Nổi bật</span> }</td><td data-label="Danh mục">@item.Category?.Name</td><td data-label="Giá / đơn vị">@item.Price.ToString(item.Price == decimal.Truncate(item.Price) ? "N0" : "N2", CultureInfo.GetCultureInfo("vi-VN")) ₫ / @item.Unit</td><td data-label="Tồn kho">@item.Stock</td><td data-label="Trạng thái">@(!item.IsActive ? "Ngừng bán" : item.Category?.IsActive != true ? "Danh mục ngừng sử dụng" : item.Stock == 0 ? "Hết hàng" : "Đang bán")</td><td data-label="Thao tác"><a asp-action="Edit" asp-route-id="@item.Id" class="admin-users-action">Chỉnh sửa</a></td></tr>
+            }
+            </tbody></table>
+            <div class="admin-users-pagination"><p>@Model.TotalCount sản phẩm</p><nav aria-label="Phân trang sản phẩm">
+                @if (Model.Page > 1) { <a asp-action="Index" asp-route-search="@Model.Search" asp-route-page="@(Model.Page - 1)" class="admin-users-page-link">Trang trước</a> }
+                <span class="admin-users-page-current">@Model.Page / @Model.TotalPages</span>
+                @if (Model.Page < Model.TotalPages) { <a asp-action="Index" asp-route-search="@Model.Search" asp-route-page="@(Model.Page + 1)" class="admin-users-page-link">Trang sau</a> }
+            </nav></div>
+        }
+    </section>
+</div>

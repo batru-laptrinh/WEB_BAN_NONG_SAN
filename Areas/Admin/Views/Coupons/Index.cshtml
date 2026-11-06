@@ -1,0 +1,51 @@
+@model WEB_BAN_NONG_SAN.ViewModels.CouponListViewModel
+@{
+    ViewData["Title"] = "Mã giảm giá";
+    var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+    <div><p class="text-uppercase small text-secondary mb-1">Ưu đãi cho mùa mua sắm</p><h1 class="h2 mb-2">Mã giảm giá</h1><p class="text-secondary mb-0">Quản lý điều kiện, thời hạn và giới hạn sử dụng tại Checkout.</p></div>
+    <a asp-action="Create" class="btn btn-primary">Tạo mã giảm giá</a>
+</div>
+@if (TempData["SuccessMessage"] is string success) { <div class="alert alert-success" role="status">@success</div> }
+@if (TempData["ErrorMessage"] is string error) { <div class="alert alert-warning" role="alert">@error</div> }
+<section class="card border-0 shadow-sm rounded-4 p-3 p-md-4">
+    <form method="get" class="d-flex flex-wrap gap-2 mb-4" role="search">
+        <label for="coupon-search" class="visually-hidden">Tìm mã giảm giá</label>
+        <input id="coupon-search" name="search" value="@Model.Search" maxlength="50" class="form-control flex-grow-1" style="max-width:28rem" placeholder="Tìm theo mã giảm giá" />
+        <button class="btn btn-outline-secondary" type="submit">Tìm kiếm</button>
+        @if (Model.Search != null) { <a asp-action="Index" class="btn btn-link">Xóa bộ lọc</a> }
+    </form>
+    @if (!Model.IsDataAvailable)
+    {
+        <div class="alert alert-warning" role="alert">Chưa tải được mã giảm giá. Vui lòng thử lại sau.</div>
+    }
+    else if (Model.Items.Count == 0)
+    {
+        <div class="text-center py-5"><h2 class="h5">Chưa có mã phù hợp</h2><p class="text-secondary mb-0">Tạo ưu đãi mới hoặc thay đổi từ khóa tìm kiếm.</p></div>
+    }
+    else
+    {
+        <p class="small text-secondary">@Model.TotalCount mã · Trang @Model.Page/@Model.TotalPages</p>
+        <div class="table-responsive"><table class="table align-middle">
+            <thead><tr><th>Mã</th><th>Mức giảm</th><th>Điều kiện</th><th>Thời hạn (UTC+7)</th><th>Lượt dùng</th><th>Trạng thái</th><th><span class="visually-hidden">Thao tác</span></th></tr></thead>
+            <tbody>@foreach (var coupon in Model.Items)
+            {
+                <tr><td><strong>@coupon.Code</strong></td><td>@coupon.Value.ToString("N2", culture) @(coupon.Kind == WEB_BAN_NONG_SAN.Models.CouponKind.Percentage ? "%" : "đ")</td>
+                    <td>Từ @coupon.MinimumSubtotal.ToString("N2", culture) đ tiền hàng</td>
+                    <td class="small text-nowrap">@coupon.StartsAtUtc.AddHours(7).ToString("dd/MM/yyyy HH:mm")<br />@coupon.EndsAtUtc.AddHours(7).ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@coupon.UsedCount / @coupon.MaxUses</td><td>@(!coupon.IsActive ? "Đã tắt" : DateTime.UtcNow >= coupon.EndsAtUtc ? "Hết hạn" : DateTime.UtcNow < coupon.StartsAtUtc ? "Chưa bắt đầu" : coupon.UsedCount >= coupon.MaxUses ? "Hết lượt" : "Đang bật")</td>
+                    <td><div class="d-flex flex-wrap gap-2"><a asp-action="Edit" asp-route-id="@coupon.Id" class="btn btn-sm btn-outline-secondary">Chỉnh sửa</a>
+                    @if (coupon.IsActive)
+                    {
+                        <form asp-action="Deactivate" asp-route-id="@coupon.Id" method="post"><input type="hidden" name="version" value="@coupon.Version" /><button type="submit" class="btn btn-sm btn-outline-danger">Tắt mã</button></form>
+                    }</div></td></tr>
+            }</tbody>
+        </table></div>
+        <nav aria-label="Phân trang mã giảm giá" class="d-flex justify-content-between align-items-center mt-3">
+            @if (Model.Page > 1) { <a asp-action="Index" asp-route-search="@Model.Search" asp-route-page="@(Model.Page - 1)" class="btn btn-outline-secondary">Trang trước</a> } else { <span></span> }
+            <span class="small">Trang @Model.Page / @Model.TotalPages</span>
+            @if (Model.Page < Model.TotalPages) { <a asp-action="Index" asp-route-search="@Model.Search" asp-route-page="@(Model.Page + 1)" class="btn btn-outline-secondary">Trang sau</a> } else { <span></span> }
+        </nav>
+    }
+</section>

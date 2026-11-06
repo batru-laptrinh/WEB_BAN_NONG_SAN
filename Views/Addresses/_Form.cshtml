@@ -1,0 +1,26 @@
+@model WEB_BAN_NONG_SAN.ViewModels.AddressFormViewModel
+<div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+<fieldset class="address-fieldset"><legend><span aria-hidden="true">01</span> Người nhận hàng</legend><div class="address-fields">
+    <div class="address-field"><label asp-for="RecipientName">Họ tên người nhận *</label><input asp-for="RecipientName" autocomplete="name" maxlength="100" placeholder="Nhập họ và tên" /><span asp-validation-for="RecipientName" class="text-danger"></span></div>
+    <div class="address-field"><label asp-for="PhoneNumber">Số điện thoại nhận hàng *</label><input asp-for="PhoneNumber" type="tel" autocomplete="tel" maxlength="20" placeholder="Số điện thoại liên hệ" /><span asp-validation-for="PhoneNumber" class="text-danger"></span></div>
+</div></fieldset>
+<fieldset class="address-fieldset"><legend><span aria-hidden="true">02</span> Địa chỉ chi tiết</legend><div class="address-fields">
+    <div class="address-field"><label asp-for="Province">Tỉnh/thành phố *</label><input asp-for="Province" autocomplete="address-level1" maxlength="100" placeholder="Tỉnh hoặc thành phố hiện hành" /><span asp-validation-for="Province" class="text-danger"></span></div>
+    <div class="address-field"><label asp-for="Ward">Phường/xã *</label><input asp-for="Ward" autocomplete="address-level2" maxlength="100" placeholder="Phường hoặc xã hiện hành" /><span asp-validation-for="Ward" class="text-danger"></span></div>
+    <div class="address-field address-field-wide"><label asp-for="District"></label><input asp-for="District" maxlength="100" placeholder="Nhập khi cần bổ sung địa danh" /><small>Có thể để trống; sử dụng tên đơn vị hành chính hiện hành tại nơi nhận hàng.</small><span asp-validation-for="District" class="text-danger"></span></div>
+    <div class="address-field address-field-wide"><label asp-for="AddressLine">Số nhà, đường, thôn/xóm và thông tin chi tiết *</label><input asp-for="AddressLine" autocomplete="street-address" maxlength="250" placeholder="Số nhà, tên đường hoặc thôn/xóm" /><span asp-validation-for="AddressLine" class="text-danger"></span></div>
+</div></fieldset>
+<fieldset class="address-fieldset"><legend><span aria-hidden="true">03</span> Ghi chú và tùy chọn</legend><div class="address-fields">
+    <div class="address-field address-field-wide"><label asp-for="Label"></label><input asp-for="Label" maxlength="50" placeholder="Ví dụ: Nhà riêng, Công ty" /><span asp-validation-for="Label" class="text-danger"></span></div>
+    <div class="address-field address-field-wide"><label asp-for="DeliveryNote"></label><textarea asp-for="DeliveryNote" rows="3" maxlength="500" placeholder="Thông tin giúp việc giao hàng thuận tiện hơn"></textarea><span asp-validation-for="DeliveryNote" class="text-danger"></span></div>
+</div></fieldset>
+@if (Model.IsCurrentDefault)
+{
+    <input type="hidden" name="IsDefault" value="true" />
+    <div class="address-default-info"><strong>Đây là địa chỉ mặc định.</strong><p>Để đổi địa chỉ mặc định, hãy chọn một địa chỉ khác trong sổ địa chỉ.</p></div>
+}
+else
+{
+    <div class="address-default-choice"><input asp-for="IsDefault" /><label asp-for="IsDefault"></label></div>
+    <small class="address-help">Địa chỉ đầu tiên tự động trở thành mặc định.</small>
+}

@@ -1,0 +1,12 @@
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment FaviconEnvironment
+@if (FaviconEnvironment.WebRootFileProvider.GetFileInfo("images/logo-nong-san.png").Exists)
+{
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico" asp-append-version="true" />
+    <link rel="icon" type="image/png" sizes="32x32" href="~/images/favicon-nong-san-32.png" asp-append-version="true" />
+    <link rel="apple-touch-icon" href="~/images/logo-nong-san.png" asp-append-version="true" />
+}
+else
+{
+    @* Do not present the old template icon or invent a replacement official mark. *@
+    <link rel="icon" href="data:," />
+}

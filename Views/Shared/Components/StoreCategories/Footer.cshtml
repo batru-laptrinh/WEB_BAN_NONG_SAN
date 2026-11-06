@@ -1,0 +1,6 @@
+@model IReadOnlyList<WEB_BAN_NONG_SAN.ViewModels.CatalogCategory>
+@foreach (var category in Model.Take(5))
+{
+    <a asp-area="" asp-controller="Catalog" asp-action="Index" asp-route-categoryId="@category.Id">@category.Name</a>
+}
+<a asp-area="" asp-controller="Catalog" asp-action="Index" asp-fragment="catalog-category">Tất cả danh mục</a>

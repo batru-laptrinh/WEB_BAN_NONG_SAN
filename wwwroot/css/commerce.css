@@ -1,0 +1,31 @@
+/* Shared commerce elements; existing admin/customer styles stay in their files. */
+.admin-body {
+  --bs-primary: #6F4E37;
+  --bs-primary-rgb: 111,78,55;
+  --bs-link-color: #6F4E37;
+  --bs-link-hover-color: #493323;
+}
+.admin-body .btn-primary { --bs-btn-bg:#6F4E37; --bs-btn-border-color:#6F4E37; --bs-btn-hover-bg:#493323; --bs-btn-hover-border-color:#493323; --bs-btn-active-bg:#493323; }
+.admin-body .btn-outline-primary { --bs-btn-color:#6F4E37; --bs-btn-border-color:#6F4E37; --bs-btn-hover-bg:#6F4E37; --bs-btn-hover-border-color:#6F4E37; --bs-btn-active-bg:#493323; }
+.admin-body .form-control:focus,.admin-body .form-select:focus { border-color:#6F4E37; box-shadow:0 0 0 .2rem #6f4e3726; }
+.admin-body .form-check-input:checked { background-color:#6F4E37; border-color:#6F4E37; }
+.commerce-stats { display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin:1.5rem 0; }
+.commerce-stats>div { padding:1.3rem;border:1px solid #DDE3E8;border-radius:1rem;background:linear-gradient(135deg,#f9f7fc,#fff);min-width:0; }
+.commerce-stats small { display:block;color:#5e5565;line-height:1.5; }
+.commerce-stats strong { display:block;font-size:1.7rem;color:#6F4E37;margin-top:.5rem;overflow-wrap:anywhere; }
+.commerce-card { border:1px solid #DDE3E8;border-radius:1.2rem;background:#fff;box-shadow:0 8px 30px #3c293609;min-width:0;overflow-wrap:anywhere; }
+.commerce-empty { padding:3rem 1.5rem;text-align:center;background:#f6f3fa;border:1px solid #E6E0F0;border-radius:1.25rem; }
+.commerce-heading { display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;margin:1.5rem 0 2rem; }
+.commerce-page .eyebrow { text-transform:uppercase;letter-spacing:.15em;font-size:.75rem;color:#6F4E37;font-weight:700; }
+.commerce-page h1 { letter-spacing:-.04em; }
+.admin-main .card { border-color:#DDE3E8;border-radius:1rem; }
+.admin-main .table td,.admin-main .table th { overflow-wrap:anywhere; }
+.admin-main .form-label { font-weight:600;color:#433a42; }
+.admin-main input,.admin-main textarea,.admin-main select { max-width:100%; }
+.admin-main .pagination { flex-wrap:wrap; }
+@media(max-width:575px) {
+  .commerce-stats {grid-template-columns:1fr 1fr;gap:.65rem;}
+  .commerce-stats>div {padding:1rem;}
+  .commerce-stats strong {font-size:1.35rem;}
+  .commerce-heading .btn {width:100%;}
+}

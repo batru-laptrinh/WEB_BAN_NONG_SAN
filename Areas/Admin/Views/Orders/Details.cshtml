@@ -1,0 +1,24 @@
+@model WEB_BAN_NONG_SAN.ViewModels.OrderDetailsViewModel
+@using WEB_BAN_NONG_SAN.ViewModels
+@{ ViewData["Title"] = "Xử lý đơn hàng"; }
+<a asp-action="Index" class="d-inline-block mb-3">← Danh sách đơn hàng</a>
+<header class="mb-4"><h1 class="h3 text-break">Đơn @Model.Code</h1><p>@Model.CreatedAtUtc.AddHours(7).ToString("dd/MM/yyyy HH:mm") (GMT+7)</p><span class="badge bg-light text-dark border fs-6">@OrderDisplay.Status(Model.Status)</span></header>
+@if (TempData["SuccessMessage"] is string success) {<div role="status" class="alert alert-success">@success</div>}
+@if (TempData["ErrorMessage"] is string error) {<div role="alert" class="alert alert-danger">@error</div>}
+<partial name="/Views/Orders/_OrderContent.cshtml" model="Model" />
+@if (Model.Actions.Count > 0)
+{
+    <section class="card border-0 shadow-sm mt-4"><div class="card-body"><h2 class="h5">Thao tác được phép</h2><p>Kiểm tra thông tin trước khi xác nhận. Hủy đơn hoàn tồn kho một lần; lượt sử dụng mã giảm giá vẫn được giữ.</p>
+        <div class="row g-3">
+        @foreach (var action in Model.Actions)
+        {
+            <form class="col-md-6" asp-action="Change" asp-route-id="@Model.Id" method="post">
+                <input type="hidden" name="target" value="@action.TargetStatus" /><input type="hidden" name="confirmation" value="@action.Confirmation" />
+                <div class="form-check mb-3"><input class="form-check-input" type="checkbox" name="confirmed" value="true" id="confirm-@action.TargetStatus" required /><label class="form-check-label" for="confirm-@action.TargetStatus">Tôi đã kiểm tra và xác nhận thao tác này.</label></div>
+                <button class="btn @(action.TargetStatus == WEB_BAN_NONG_SAN.Models.OrderStatus.Cancelled ? "btn-outline-danger" : "btn-primary")" type="submit">@action.Label</button>
+            </form>
+        }
+        </div>
+    </div></section>
+}
+else {<p class="mt-4 text-muted">Đơn hàng ở trạng thái cuối; không còn thao tác chuyển trạng thái.</p>}

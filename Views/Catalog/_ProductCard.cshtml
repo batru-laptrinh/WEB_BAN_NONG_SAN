@@ -1,0 +1,52 @@
+@model WEB_BAN_NONG_SAN.ViewModels.CatalogProductCard
+@using System.Globalization
+@{
+    var hasImage = !string.IsNullOrWhiteSpace(Model.ImagePath);
+    var isFeatured = ViewData["ShowFeaturedBadge"] is true;
+}
+<article class="store-product-card" data-product-id="@Model.Id">
+    <a class="store-product-picture @(hasImage ? "" : "is-placeholder")" asp-controller="Catalog" asp-action="Details" asp-route-id="@Model.Id" aria-label="Xem @Model.Name">
+        <img data-product-image data-fallback-src="@Url.Content("~/images/agriculture-harvest.webp")" src="@(hasImage ? Model.ImagePath : Url.Content("~/images/agriculture-harvest.webp"))"
+             alt="@(hasImage ? Model.Name : "Chưa có ảnh sản phẩm — ảnh minh họa rau củ và trái cây")"
+             loading="lazy" decoding="async" width="480" height="400" />
+        <span class="store-product-badges">
+            @if (Model.Stock <= 0)
+            {
+                <span class="store-stock-badge is-empty">Tạm hết hàng</span>
+            }
+            @if (isFeatured)
+            {
+                <span class="store-stock-badge is-featured">Nổi bật</span>
+            }
+        </span>
+        @if (!hasImage)
+        {
+            <span class="store-photo-caption">Ảnh minh họa</span>
+        }
+    </a>
+    <div class="store-product-content">
+        <p class="store-product-category">@Model.CategoryName</p>
+        <h3><a asp-controller="Catalog" asp-action="Details" asp-route-id="@Model.Id">@Model.Name</a></h3>
+        <p class="store-product-price">@Model.Price.ToString("#,0.##", CultureInfo.GetCultureInfo("vi-VN")) <span>₫ <span class="store-product-unit">/ @Model.Unit</span></span></p>
+        <p class="store-card-stock @(Model.Stock > 0 ? "" : "is-empty")"><span aria-hidden="true"></span>@(Model.Stock > 0 ? "Còn hàng" : "Chưa thể đặt mua")</p>
+        <div class="store-product-bottom">
+            <a class="store-card-detail" asp-controller="Catalog" asp-action="Details" asp-route-id="@Model.Id" aria-label="Xem chi tiết @Model.Name">Chi tiết <span aria-hidden="true">→</span></a>
+            @if (Model.Stock > 0 && User.Identity?.IsAuthenticated == true)
+            {
+                <form asp-controller="Cart" asp-action="Add" method="post" class="store-card-add">
+                    <input type="hidden" name="productId" value="@Model.Id" />
+                    <input type="hidden" name="quantity" value="1" />
+                    <button type="submit" aria-label="Thêm @Model.Name vào giỏ hàng"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg><span>Thêm vào giỏ</span></button>
+                </form>
+            }
+            else if (Model.Stock > 0)
+            {
+                <a class="store-card-login" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("Details", "Catalog", new { id = Model.Id })" aria-label="Đăng nhập để mua @Model.Name">Đăng nhập để mua</a>
+            }
+            else
+            {
+                <span class="store-card-unavailable">Hết hàng</span>
+            }
+        </div>
+    </div>
+</article>

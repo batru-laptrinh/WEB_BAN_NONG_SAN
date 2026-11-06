@@ -1,0 +1,108 @@
+@model WEB_BAN_NONG_SAN.ViewModels.CatalogIndexViewModel
+@using System.Globalization
+@{ ViewData["Title"] = "Cửa hàng nông sản"; }
+<nav class="store-breadcrumb" aria-label="Đường dẫn">
+    <a asp-controller="Home" asp-action="Index">Trang chủ</a><span aria-hidden="true">/</span><span aria-current="page">Cửa hàng</span>
+</nav>
+<section class="store-page-heading store-catalog-heading" aria-labelledby="catalog-title">
+    <div>
+        <p class="store-eyebrow">CHỌN CHO BỮA ĂN HÔM NAY</p>
+        <h1 id="catalog-title">Cửa hàng nông sản</h1>
+        <p>Tìm rau củ, trái cây và nông sản phù hợp với bữa ăn của gia đình.</p>
+    </div>
+    <div class="store-catalog-heading-note"><span class="store-catalog-heading-mark" aria-hidden="true"><svg viewBox="0 0 40 40" fill="none"><path d="M8 15h24l-3 18H11L8 15Z"/><path d="m13 15 5-9m9 9-5-9M16 22v5m8-5v5"/></svg></span><span><strong>Lựa chọn dễ dàng</strong><span>Thông tin rõ ràng · Thanh toán COD</span></span></div>
+</section>
+<div class="store-catalog-layout">
+    <aside class="store-filter">
+        <div class="store-filter-heading">
+            <h2>Tìm sản phẩm</h2>
+            <button class="store-filter-toggle d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#catalog-filters" aria-expanded="true" aria-controls="catalog-filters">Ẩn/hiện bộ lọc <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m5 7 5 5 5-5" /></svg></button>
+        </div>
+        <div id="catalog-filters" class="collapse show">
+            <form asp-action="Index" method="get">
+                <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+                <div class="store-filter-field">
+                    <label for="catalog-q">Tên sản phẩm</label>
+                    <input id="catalog-q" name="q" value="@Model.Query.Q" maxlength="100" class="form-control" placeholder="Tìm rau, củ, trái cây…" />
+                </div>
+                <div class="store-filter-field">
+                <label for="catalog-category">Danh mục</label>
+                <select id="catalog-category" name="categoryId" class="form-select">
+                    <option value="">Tất cả danh mục</option>
+                    @foreach (var category in Model.Categories)
+                    {
+                        <option value="@category.Id" selected="@(Model.Query.CategoryId == category.Id)">@category.Name</option>
+                    }
+                </select>
+                </div>
+                <fieldset class="store-price-filter">
+                    <legend>Khoảng giá (₫)</legend>
+                    <div>
+                        <label for="catalog-min">Từ</label>
+                        <input id="catalog-min" name="minPrice" value="@Model.Query.MinPrice?.ToString(CultureInfo.InvariantCulture)" type="number" min="0" max="1000000000" step="0.01" class="form-control" placeholder="0" inputmode="decimal" />
+                    </div>
+                    <div>
+                        <label for="catalog-max">Đến</label>
+                        <input id="catalog-max" name="maxPrice" value="@Model.Query.MaxPrice?.ToString(CultureInfo.InvariantCulture)" type="number" min="0" max="1000000000" step="0.01" class="form-control" placeholder="Không giới hạn" inputmode="decimal" />
+                    </div>
+                </fieldset>
+                <div class="store-filter-field store-filter-sort">
+                <label for="catalog-sort">Sắp xếp</label>
+                <select id="catalog-sort" name="sort" class="form-select">
+                    <option value="newest" selected="@(Model.Query.Sort == "newest")">Mới nhất</option>
+                    <option value="name" selected="@(Model.Query.Sort == "name")">Tên A — Z</option>
+                    <option value="price-asc" selected="@(Model.Query.Sort == "price-asc")">Giá tăng dần</option>
+                    <option value="price-desc" selected="@(Model.Query.Sort == "price-desc")">Giá giảm dần</option>
+                </select>
+                </div>
+                <button type="submit" class="store-button w-100">Áp dụng bộ lọc</button>
+                <a asp-action="Index" class="store-clear-filter">Xóa bộ lọc</a>
+            </form>
+        </div>
+        <div class="store-filter-note"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 6h18v13H3V6Zm0 4h18m-14 5h4"/></svg><span>Thanh toán khi nhận hàng. Kiểm tra tổng tiền tại bước đặt hàng.</span></div>
+    </aside>
+    <section aria-label="Kết quả sản phẩm" class="store-catalog-results">
+        @if (!Model.IsDataAvailable)
+        {
+            <div class="store-empty" role="status"><h2>Chưa tải được sản phẩm</h2><p>Vui lòng thử lại sau. Thông tin sản phẩm hiện chưa khả dụng.</p><a class="store-button store-button-outline" asp-action="Index">Tải lại cửa hàng</a></div>
+        }
+        else
+        {
+            <div class="store-results-top">
+                <p><strong>@Model.TotalCount</strong> sản phẩm phù hợp</p>
+                <span>Trang @Model.Query.Page / @Model.TotalPages</span>
+            </div>
+            @if (!string.IsNullOrWhiteSpace(Model.Query.Q))
+            {
+                <p class="store-search-context">Kết quả tìm kiếm cho <strong>“@Model.Query.Q”</strong></p>
+            }
+            @if (Model.Products.Count == 0)
+            {
+                <div class="store-empty store-catalog-empty"><div class="store-empty-photo" aria-hidden="true"><img src="~/images/agriculture-harvest.webp" alt="" width="180" height="140" loading="lazy" /></div><h2>Chưa tìm thấy sản phẩm</h2><p>Thử từ khóa khác hoặc mở rộng bộ lọc của bạn.</p><a asp-action="Index" class="store-button store-button-outline">Xem tất cả sản phẩm</a></div>
+            }
+            else
+            {
+                <div class="store-product-grid store-catalog-grid">
+                    @foreach (var product in Model.Products)
+                    {
+                        <partial name="_ProductCard" model="product" />
+                    }
+                </div>
+            }
+            @if (Model.TotalPages > 1)
+            {
+                <nav class="store-pagination" aria-label="Phân trang sản phẩm">
+                    @if (Model.Query.Page > 1)
+                    {
+                        <a asp-action="Index" asp-route-q="@Model.Query.Q" asp-route-categoryId="@Model.Query.CategoryId" asp-route-minPrice="@Model.Query.MinPrice" asp-route-maxPrice="@Model.Query.MaxPrice" asp-route-sort="@Model.Query.Sort" asp-route-page="@(Model.Query.Page - 1)" rel="prev"><span aria-hidden="true">←</span> Trước</a>
+                    }
+                    <span aria-current="page">@Model.Query.Page / @Model.TotalPages</span>
+                    @if (Model.Query.Page < Model.TotalPages)
+                    {
+                        <a asp-action="Index" asp-route-q="@Model.Query.Q" asp-route-categoryId="@Model.Query.CategoryId" asp-route-minPrice="@Model.Query.MinPrice" asp-route-maxPrice="@Model.Query.MaxPrice" asp-route-sort="@Model.Query.Sort" asp-route-page="@(Model.Query.Page + 1)" rel="next">Sau <span aria-hidden="true">→</span></a>
+                    }
+                </nav>
+            }
+        }
+    </section>
+</div>

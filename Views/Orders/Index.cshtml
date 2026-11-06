@@ -1,0 +1,39 @@
+@model WEB_BAN_NONG_SAN.ViewModels.OrderListViewModel
+@using WEB_BAN_NONG_SAN.ViewModels
+@using System.Globalization
+@{
+    ViewData["Title"] = "Đơn hàng của tôi";
+    var culture = CultureInfo.GetCultureInfo("vi-VN");
+}
+<section class="purchase-page purchase-orders">
+    <nav class="store-breadcrumb" aria-label="Đường dẫn"><a asp-controller="Home" asp-action="Index">Trang chủ</a><span aria-hidden="true">/</span><a asp-controller="Profile" asp-action="Index">Tài khoản</a><span aria-hidden="true">/</span><span>Đơn hàng</span></nav>
+    <header class="purchase-heading"><div><p class="store-eyebrow">TÀI KHOẢN CỦA BẠN</p><h1>Đơn hàng của tôi</h1><p>Theo dõi những đơn mua và thông tin giao hàng trong cùng một nơi.</p></div><a class="purchase-back-link" asp-controller="Catalog" asp-action="Index">Tiếp tục mua sắm <span aria-hidden="true">→</span></a></header>
+    <nav class="purchase-account-nav" aria-label="Quản lý tài khoản"><a asp-controller="Profile" asp-action="Index">Hồ sơ cá nhân</a><a asp-controller="Addresses" asp-action="Index">Địa chỉ giao hàng</a><a asp-controller="Orders" asp-action="Index" aria-current="page">Đơn hàng của tôi</a></nav>
+    @if (TempData["ErrorMessage"] is string error) { <div role="alert" class="alert alert-danger">@error</div> }
+    @if (!Model.IsDataAvailable)
+    {
+        <div class="purchase-empty" role="status"><span class="purchase-empty-number" aria-hidden="true">!</span><h2>Chưa tải được đơn hàng</h2><p>Tạm thời chưa tải được đơn hàng. Vui lòng thử lại sau.</p><a class="store-button store-button-outline" asp-action="Index">Tải lại danh sách</a></div>
+    }
+    else if (Model.TotalCount == 0)
+    {
+        <div class="purchase-empty"><span class="purchase-empty-number" aria-hidden="true">0</span><h2>Bạn chưa có đơn hàng</h2><p>Chọn nông sản phù hợp và đặt đơn COD đầu tiên của bạn.</p><a class="store-button" asp-controller="Catalog" asp-action="Index">Khám phá sản phẩm <span aria-hidden="true">→</span></a></div>
+    }
+    else
+    {
+        <div class="purchase-list-heading"><h2>Lịch sử mua hàng</h2><span>@Model.TotalCount đơn hàng · Trang @Model.Page / @Model.TotalPages</span></div>
+        <div class="purchase-order-list">
+            @foreach (var order in Model.Items)
+            {
+                <article class="purchase-order-card">
+                    <header><div class="purchase-order-code"><span>MÃ ĐƠN HÀNG</span><h2>@order.Code</h2></div><span class="purchase-status purchase-status-@order.Status.ToString().ToLowerInvariant()">@OrderDisplay.Status(order.Status)</span></header>
+                    <div class="purchase-order-card-body"><div><span class="purchase-item-meta">Ngày đặt</span><time datetime="@order.CreatedAtUtc.ToString("O")">@order.CreatedAtUtc.AddHours(7).ToString("dd/MM/yyyy · HH:mm") <small>UTC+7</small></time></div><div><span class="purchase-item-meta">Người nhận</span><strong>@order.RecipientName</strong></div><div class="purchase-order-amount"><span class="purchase-item-meta">Tổng thanh toán</span><strong>@order.Total.ToString("N2", culture) ₫</strong></div></div>
+                    <footer><span>@OrderDisplay.Payment(order.PaymentStatus)</span><a asp-action="Details" asp-route-id="@order.Id" class="store-button store-button-outline">Xem chi tiết <span aria-hidden="true">→</span></a></footer>
+                </article>
+            }
+        </div>
+        @if (Model.TotalPages > 1)
+        {
+            <nav class="purchase-pagination" aria-label="Phân trang đơn hàng">@if (Model.Page > 1) { <a class="store-button store-button-outline" asp-action="Index" asp-route-page="@(Model.Page - 1)" rel="prev">← Trang trước</a> }<span aria-current="page">@Model.Page / @Model.TotalPages</span>@if (Model.Page < Model.TotalPages) { <a class="store-button store-button-outline" asp-action="Index" asp-route-page="@(Model.Page + 1)" rel="next">Trang sau →</a> }</nav>
+        }
+    }
+</section>

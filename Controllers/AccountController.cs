@@ -173,7 +173,7 @@ namespace WEB_BAN_NONG_SAN.Controllers
             {
                 ModelState.AddModelError(
                     "",
-                    "Tài khoản tạm thời bị khóa do đăng nhập sai nhiều lần.");
+                    "Tài khoản đang bị khóa. Vui lòng thử lại sau hoặc liên hệ quản trị viên.");
 
                 return View(model);
             }
@@ -244,6 +244,14 @@ namespace WEB_BAN_NONG_SAN.Controllers
 
             if (user == null)
             {
+                return Challenge();
+            }
+
+            // Cookie cũ có thể còn trong chu kỳ kiểm tra stamp. Không cho tài khoản
+            // đang khóa đổi mật khẩu rồi làm mới cookie bằng stamp hiện tại.
+            if (await _userManager.IsLockedOutAsync(user))
+            {
+                await _signInManager.SignOutAsync();
                 return Challenge();
             }
 
@@ -343,11 +351,13 @@ namespace WEB_BAN_NONG_SAN.Controllers
                         "Khôi phục mật khẩu - Nông Sản Sạch",
                         htmlMessage);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // Chỉ ghi lỗi kỹ thuật vào log, không lộ thông tin
                     // tài khoản/token hoặc lỗi SMTP cho người dùng.
-                    _logger.LogError(ex, "Không thể gửi email khôi phục mật khẩu.");
+                    // SMTP/provider exception text can contain recipient details,
+                    // credentials or links. Record a fixed message only.
+                    _logger.LogError("Không thể gửi email khôi phục mật khẩu.");
                 }
             }
 

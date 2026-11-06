@@ -1,0 +1,90 @@
+@model AdminUserDetailsViewModel
+@{
+    ViewData["Title"] = "Chi tiết khách hàng";
+    var search = ViewData["Search"] as string;
+    var returnPage = ViewData["Page"] is int currentPage ? currentPage : 1;
+    var statusClass = Model.LockoutState switch { AdminUserLockoutState.Manual => "is-manual", AdminUserLockoutState.Temporary => "is-temporary", _ => "is-active" };
+}
+
+<div class="admin-users">
+    <a asp-area="Admin" asp-controller="Users" asp-action="Index" asp-route-search="@search" asp-route-page="@returnPage" class="admin-users-back"><span aria-hidden="true">←</span> Danh sách khách hàng</a>
+    <div class="admin-page-heading admin-users-heading">
+        <div>
+            <p class="admin-eyebrow">THÔNG TIN TÀI KHOẢN</p>
+            <h1>Chi tiết khách hàng</h1>
+            <p class="admin-page-description">Thông tin cơ bản và trạng thái truy cập của tài khoản.</p>
+        </div>
+    </div>
+    @if (TempData["SuccessMessage"] is string success)
+    {
+        <div class="admin-users-alert is-success" role="status">@success</div>
+    }
+    @if (TempData["ErrorMessage"] is string error)
+    {
+        <div class="admin-users-alert is-error" role="alert">@error</div>
+    }
+
+    <div class="admin-users-detail-grid">
+        <section class="admin-users-detail-card" aria-labelledby="user-profile-title">
+            <div class="admin-users-profile-heading">
+                <span class="admin-users-profile-avatar" aria-hidden="true"><svg class="admin-icon"><use href="#admin-user"></use></svg></span>
+                <div>
+                    <p class="admin-eyebrow">HỒ SƠ KHÁCH HÀNG</p>
+                    <h2 id="user-profile-title">@(string.IsNullOrWhiteSpace(Model.FullName) ? "Chưa cập nhật họ tên" : Model.FullName)</h2>
+                    <p class="admin-users-profile-email">@Model.Email</p>
+                </div>
+            </div>
+            <dl class="admin-users-detail-list">
+                <div><dt>Họ và tên</dt><dd>@(string.IsNullOrWhiteSpace(Model.FullName) ? "Chưa cập nhật" : Model.FullName)</dd></div>
+                <div><dt>Email</dt><dd>@Model.Email</dd></div>
+                <div><dt>Số điện thoại</dt><dd>@(string.IsNullOrWhiteSpace(Model.PhoneNumber) ? "Chưa cập nhật" : Model.PhoneNumber)</dd></div>
+                <div><dt>Vai trò</dt><dd><div class="admin-users-roles">@foreach (var role in Model.Roles) { <span class="admin-users-role">@role</span> }</div></dd></div>
+                <div><dt>Trạng thái</dt><dd><span class="admin-users-status @statusClass">@Model.StatusText</span></dd></div>
+                @if (Model.LockoutState == AdminUserLockoutState.Temporary && Model.LockoutEnd is DateTimeOffset lockoutEnd)
+                {
+                    var displayInVietnam = lockoutEnd.UtcDateTime <= DateTime.MaxValue.AddHours(-7);
+                    var displayTime = displayInVietnam ? lockoutEnd.UtcDateTime.AddHours(7) : lockoutEnd.UtcDateTime;
+                    <div><dt>Khóa tạm thời đến</dt><dd><time datetime="@lockoutEnd.ToString("O")">@displayTime.ToString("dd/MM/yyyy HH:mm", CultureInfo.GetCultureInfo("vi-VN")) @(displayInVietnam ? "UTC+7" : "UTC")</time></dd></div>
+                }
+            </dl>
+        </section>
+
+        <section class="admin-users-access-card" aria-labelledby="user-access-title">
+            <span class="admin-users-access-icon" aria-hidden="true"><svg class="admin-icon"><use href="#admin-shield"></use></svg></span>
+            <p class="admin-eyebrow">QUẢN LÝ TRUY CẬP</p>
+            <h2 id="user-access-title">Trạng thái tài khoản</h2>
+            @if (Model.IsAdmin || Model.IsSelf)
+            {
+                <p>@(Model.IsAdmin ? "Tài khoản có vai trò Admin được bảo vệ. Không thể khóa hoặc mở khóa qua chức năng quản lý khách hàng." : "Bạn đang sử dụng tài khoản này. Không thể tự thay đổi trạng thái truy cập tại đây.")</p>
+                <div class="admin-users-protection-note"><svg class="admin-icon" aria-hidden="true"><use href="#admin-shield"></use></svg><strong>Thao tác thay đổi bị vô hiệu hóa</strong></div>
+            }
+            else
+            {
+                @if (Model.LockoutState == AdminUserLockoutState.Manual)
+                {
+                    <p>Tài khoản bị khóa thủ công và không thể đăng nhập mới cho đến khi được quản trị viên mở khóa.</p>
+                }
+                else if (Model.LockoutState == AdminUserLockoutState.Temporary)
+                {
+                    <p>Tài khoản đang bị khóa tạm thời do đăng nhập sai nhiều lần. Bạn có thể mở khóa hoặc chuyển sang khóa thủ công.</p>
+                }
+                else
+                {
+                    <p>Tài khoản đang hoạt động. Khóa thủ công sẽ ngăn các lần đăng nhập mới cho đến khi được mở khóa.</p>
+                }
+                <div class="admin-users-detail-actions">
+                    @if (Model.CanLock)
+                    {
+                        <a asp-area="Admin" asp-controller="Users" asp-action="Confirm" asp-route-id="@Model.Id" asp-route-operation="lock" asp-route-search="@search" asp-route-page="@returnPage" class="admin-users-button is-primary">Khóa tài khoản</a>
+                    }
+                    @if (Model.CanUnlock)
+                    {
+                        <a asp-area="Admin" asp-controller="Users" asp-action="Confirm" asp-route-id="@Model.Id" asp-route-operation="unlock" asp-route-search="@search" asp-route-page="@returnPage" class="admin-users-button is-primary">Mở khóa tài khoản</a>
+                    }
+                </div>
+                <p class="admin-users-access-note">Các thao tác đều cần xác nhận và không thay đổi mật khẩu hoặc vai trò của khách hàng.</p>
+            }
+        </section>
+    </div>
+    <p class="admin-users-footnote"><svg class="admin-icon" aria-hidden="true"><use href="#admin-clock"></use></svg><span>Khi khóa tài khoản, phiên đang đăng nhập có thể tiếp tục truy cập tới lần kiểm tra phiên kế tiếp (chu kỳ 5 phút).</span></p>
+</div>
