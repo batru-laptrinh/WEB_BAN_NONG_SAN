@@ -1,0 +1,104 @@
+/* Customer account presentation. Identity routes and form bindings stay unchanged. */
+.auth-shell,.account-shell,.account-result-card { color:var(--store-ink,#292e28); }
+.auth-shell { display:grid;grid-template-columns:minmax(0,.96fr) minmax(0,1.04fr);max-width:1080px;margin:18px auto 42px;border:1px solid #dde3d8;border-radius:22px;background:#fff;overflow:hidden;box-shadow:0 15px 45px #26392807; }
+.auth-intro { display:flex;flex-direction:column;background:#f1f3ec;min-width:0; }
+.auth-intro-copy { padding:36px 36px 20px; }
+.account-eyebrow { color:#6F4E37;font-size:.875rem;line-height:1.5;font-weight:700;letter-spacing:.025em;margin:0 0 12px; }
+.auth-intro h2 { font:700 clamp(1.55rem,2.5vw,2rem)/1.4 "Be Vietnam Pro",sans-serif;letter-spacing:-.035em;margin:0 0 16px;color:#304d3b; }
+.auth-intro-copy>p:last-child { font-size:1rem;line-height:1.75;color:#556052;margin:0; }
+.auth-produce-photo { width:100%;height:300px;object-fit:cover;margin-top:auto; }
+.auth-intro-bottom { padding:22px 36px;display:grid;gap:9px;color:#365746;font-size:.875rem;font-weight:600; }
+.auth-intro-bottom span::before { content:"✓";margin-right:9px; }
+.auth-card { padding:36px 42px 40px;min-width:0; }
+.auth-brand-link { color:#6F4E37;display:inline-flex;align-items:center;max-width:100%;text-decoration:none!important;margin-bottom:30px; }
+.auth-card h1,.account-content-heading h1,.account-result-card h1 { font-size:clamp(1.65rem,3vw,2.15rem);font-weight:750;line-height:1.35;letter-spacing:-.035em;margin:0 0 14px; }
+.account-description { color:#5e665b;line-height:1.7;margin:0 0 26px;font-size:1rem; }
+.account-form { display:grid;gap:20px; }
+.account-field { display:flex;flex-direction:column;gap:8px;min-width:0; }
+.account-field label { font-weight:650;font-size:.9375rem;line-height:1.6;color:#36402f; }
+.account-field .form-control { border:1px solid #bfc8b8;border-radius:9px;min-height:50px;font-size:1rem;padding:12px 14px;color:#263225;background:#fff; }
+.account-field .form-control::placeholder { color:#778171;opacity:1; }
+.account-field small,.account-help { font-size:.875rem;line-height:1.7;color:#636d5d; }
+.account-help { margin:0;background:#f4f5f0;border-radius:8px;padding:12px 14px; }
+.account-field .account-readonly { background:#f1f3f1;color:#5c6757;border-color:#d8ded3; }
+.account-form-options { display:flex;align-items:center;flex-wrap:wrap;justify-content:space-between;gap:10px 18px;font-size:.875rem; }
+.account-form-options .form-check { margin-bottom:0;padding-left:1.7em; }
+.account-form-options .form-check-input { width:1.12em;height:1.12em;margin-left:-1.7em;margin-top:.25em;accent-color:#6F4E37; }
+.account-form-options .form-check-label { line-height:1.8; }
+.account-form-options a { font-weight:650;padding:8px 0; }
+.account-submit { width:100%;min-height:50px;text-align:center; }
+.account-footer-link { color:#5e665b;text-align:center;padding-top:24px;margin:26px 0 0;border-top:1px solid #e4e7df;font-size:.9375rem;line-height:1.8; }
+.account-footer-link a { color:#6F4E37;font-weight:650; }
+.account-validation.validation-summary-valid,.account-field .field-validation-valid { display:none; }
+.account-validation.validation-summary-errors { border:1px solid #e8c4bd;background:#fff4f0;color:#8e3528;padding:14px 18px;border-radius:9px;font-size:.9375rem;line-height:1.7; }
+.account-validation ul { padding-left:20px;margin:0; }
+.account-field .field-validation-error { color:#9b3327;font-size:.875rem;line-height:1.6; }
+.account-result-card { max-width:620px;margin:28px auto 44px;padding:40px;border:1px solid #DDE3E8;border-radius:20px;background:#fff;text-align:center;box-shadow:0 12px 32px #273c2405; }
+.account-result-card p:not(.account-eyebrow):not(.account-status-code) { color:#5e665b;line-height:1.8; }
+.account-result-card .auth-brand-link { margin-bottom:24px; }
+.account-result-symbol { display:flex;align-items:center;justify-content:center;width:68px;height:68px;font-size:2rem;border-radius:50%;background:#eaf0e4;color:#365746;margin:0 auto 24px; }
+.account-result-card .account-submit { margin-top:10px; }
+.account-status-code { color:#6F4E37;font-size:4rem;line-height:1.15;font-weight:750;margin:0 0 20px; }
+.account-inline-link { display:inline-block;margin-top:20px;font-weight:600;padding:8px; }
+.account-shell { display:grid;grid-template-columns:260px minmax(0,1fr);gap:30px;padding:12px 0 36px; }
+.account-sidebar { align-self:start;padding:28px 22px;background:#fff;border:1px solid #dce1d6;border-radius:16px; }
+.account-sidebar h2 { font-size:1.5rem;font-weight:700;letter-spacing:-.03em;margin:0 0 12px; }
+.account-sidebar>p:not(.account-eyebrow) { font-size:.9375rem;line-height:1.7;color:#67705f;margin-bottom:22px; }
+.account-navigation { display:grid;gap:6px; }
+.account-navigation a { display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:48px;font-size:.9375rem;font-weight:550;padding:12px;border-radius:8px;color:#48533e;text-decoration:none; }
+.account-navigation a:hover { background:#f4f5f0; }
+.account-navigation a.is-active { background:#E6E0F0;color:#5a3f2e;font-weight:700; }
+.account-navigation a:not(.is-active)>span { color:#7e8a72; }
+.account-sidebar-note { margin-top:26px;padding:20px 12px 0;border-top:1px solid #dfe4d7;font-size:.875rem;line-height:1.7; }
+.account-sidebar-note strong { font-weight:650;color:#365746; }
+.account-sidebar-note p { margin:8px 0;color:#67705f; }
+.account-sidebar-note a { font-weight:650; }
+.account-content { min-width:0; }
+.account-content-heading { padding:3px 0 22px; }
+.account-content-heading p:last-child { color:#5e6856;font-size:1rem;line-height:1.75;margin:0; }
+.account-panel { border:1px solid #dce1d6;border-radius:16px;background:#fff;padding:30px; }
+.account-panel .account-form { max-width:660px; }
+.account-panel-actions { display:flex;align-items:center;flex-wrap:wrap;gap:16px 24px;padding-top:8px; }
+.account-panel-actions .store-button { min-width:180px;min-height:48px; }
+.account-panel-actions>a { font-size:.9375rem;padding:10px 0; }
+.account-info-note { padding:15px 18px;font-size:.9375rem;line-height:1.75;color:#5d4d42;background:#f2edf7;border-radius:9px; }
+.account-quick-links { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:22px; }
+.account-quick-links>a { display:flex;flex-direction:column;gap:8px;border:1px solid #dce1d6;border-radius:13px;padding:22px;text-decoration:none;background:#f7f8f4;min-width:0; }
+.account-quick-label { color:#65725b;font-size:.8125rem;font-weight:650;letter-spacing:.025em; }
+.account-quick-links strong { color:#394e32;font-size:1.0625rem;line-height:1.5; }
+.account-quick-links>a>span:last-child { color:#626e59;font-size:.875rem;line-height:1.7; }
+.auth-shell a:focus-visible,.account-shell a:focus-visible,.account-result-card a:focus-visible { outline:3px solid #6F4E37;outline-offset:4px; }
+@media(max-width:991px) {
+  .auth-card { padding:30px; }
+  .auth-intro-copy { padding:30px 26px 20px; }
+  .auth-intro h2 { font-size:1.5rem; }
+  .auth-intro-bottom { padding:22px 26px; }
+  .auth-produce-photo { height:260px; }
+  .account-shell { grid-template-columns:220px minmax(0,1fr);gap:20px; }
+  .account-sidebar { padding:24px 16px; }
+}
+@media(max-width:767px) {
+  .auth-shell { grid-template-columns:1fr;max-width:560px;margin-top:5px; }
+  .auth-intro { display:none; }
+  .auth-card { padding:28px; }
+  .auth-brand-link { margin-bottom:26px; }
+  .account-shell { grid-template-columns:1fr;gap:24px; }
+  .account-sidebar { padding:20px; }
+  .account-sidebar>.account-eyebrow,.account-sidebar>h2,.account-sidebar>p,.account-sidebar-note { display:none; }
+  .account-navigation { display:flex;gap:8px;flex-wrap:wrap; }
+  .account-navigation a { flex:1 1 calc(50% - 8px);padding:10px 12px;min-width:0;font-size:.875rem; }
+  .account-navigation a span { display:none; }
+  .account-panel { padding:24px; }
+  .account-quick-links { gap:12px; }
+  .account-quick-links>a { padding:18px; }
+  .account-result-card { padding:30px 24px;margin-top:10px; }
+}
+@media(max-width:420px) {
+  .auth-card,.account-panel { padding:22px 18px; }
+  .account-quick-links { grid-template-columns:1fr; }
+  .account-panel-actions { display:grid;gap:14px; }
+  .account-panel-actions .store-button { width:100%;min-width:0; }
+  .account-sidebar { padding:14px; }
+  .account-form-options { align-items:flex-start; }
+  .account-form-options .form-check { flex-basis:100%; }
+}

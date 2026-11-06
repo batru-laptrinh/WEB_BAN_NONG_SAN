@@ -1,18 +1,39 @@
 @model WEB_BAN_NONG_SAN.ViewModels.OrderDetailsViewModel
 @using WEB_BAN_NONG_SAN.ViewModels
-@{ ViewData["Title"] = "Chi tiết đơn hàng"; }
-<a asp-action="Index" class="d-inline-block mb-3">← Đơn hàng của tôi</a>
-<div class="mb-4"><h1 class="h3 text-break">Đơn hàng @Model.Code</h1><p class="text-muted">Đặt lúc @Model.CreatedAtUtc.AddHours(7).ToString("dd/MM/yyyy HH:mm") (GMT+7)</p><span class="badge bg-light text-dark border fs-6">@OrderDisplay.Status(Model.Status)</span></div>
-@if (TempData["SuccessMessage"] is string success) {<div role="status" class="alert alert-success">@success</div>}
-@if (TempData["ErrorMessage"] is string error) {<div role="alert" class="alert alert-danger">@error</div>}
-<partial name="_OrderContent" model="Model" />
-@foreach (var action in Model.Actions)
-{
-    <section class="card border-0 shadow-sm mt-4"><div class="card-body"><h2 class="h5">Hủy đơn hàng này?</h2><p>Bạn có thể hủy khi đơn còn chờ xác nhận. Sản phẩm sẽ được hoàn lại tồn kho. Lượt sử dụng mã giảm giá vẫn được tính.</p>
-        <form asp-action="Cancel" asp-route-id="@Model.Id" method="post">
-            <input type="hidden" name="confirmation" value="@action.Confirmation" />
-            <div class="form-check mb-3"><input class="form-check-input" type="checkbox" name="confirmed" value="true" id="confirm-cancel" required /><label class="form-check-label" for="confirm-cancel">Tôi xác nhận muốn hủy đơn hàng này.</label></div>
-            <button class="btn btn-outline-danger" type="submit">@action.Label</button>
-        </form>
-    </div></section>
+@using WEB_BAN_NONG_SAN.Models
+@{
+    ViewData["Title"] = "Chi tiết đơn hàng";
+    var stages = new[] { OrderStatus.Pending, OrderStatus.Confirmed, OrderStatus.Shipping, OrderStatus.Completed };
 }
+<section class="purchase-page purchase-order-details">
+    <nav class="store-breadcrumb" aria-label="Đường dẫn"><a asp-controller="Home" asp-action="Index">Trang chủ</a><span aria-hidden="true">/</span><a asp-action="Index">Đơn hàng của tôi</a><span aria-hidden="true">/</span><span>Chi tiết đơn hàng</span></nav>
+    <header class="purchase-heading"><div><p class="store-eyebrow">THÔNG TIN ĐƠN MUA</p><h1>Chi tiết đơn hàng</h1><p>Đặt lúc <time datetime="@Model.CreatedAtUtc.ToString("O")">@Model.CreatedAtUtc.AddHours(7).ToString("dd/MM/yyyy · HH:mm") (GMT+7)</time></p></div><a asp-action="Index" class="purchase-back-link">← Đơn hàng của tôi</a></header>
+    <section class="purchase-order-overview" aria-labelledby="order-code-title"><div class="purchase-order-code"><span id="order-code-title">MÃ ĐƠN HÀNG</span><strong>@Model.Code</strong></div><span class="purchase-status purchase-status-@Model.Status.ToString().ToLowerInvariant()">@OrderDisplay.Status(Model.Status)</span></section>
+    @if (TempData["SuccessMessage"] is string success) { <div role="status" class="alert alert-success">@success</div> }
+    @if (TempData["ErrorMessage"] is string error) { <div role="alert" class="alert alert-danger">@error</div> }
+    @if (Model.Status != OrderStatus.Cancelled)
+    {
+        <ol class="purchase-order-timeline" aria-label="Trạng thái đơn hàng">
+            @for (var index = 0; index < stages.Length; index++)
+            {
+                var stage = stages[index];
+                var complete = Model.Status > stage;
+                var current = Model.Status == stage;
+                <li class="@(complete ? "is-complete" : current ? "is-current" : "")" aria-current="@(current ? "step" : null)"><span aria-hidden="true">@(complete ? "✓" : (index + 1).ToString())</span><strong>@OrderDisplay.Status(stage)</strong></li>
+            }
+        </ol>
+    }
+    else { <div class="purchase-cancelled-note" role="status">Đơn hàng này đã được hủy. Thông tin đơn hàng được giữ lại để bạn đối chiếu.</div> }
+    <partial name="_OrderContent" model="Model" />
+    @foreach (var action in Model.Actions)
+    {
+        <section class="purchase-cancel-panel"><div><p class="store-eyebrow">THAY ĐỔI KẾ HOẠCH MUA HÀNG?</p><h2>Hủy đơn hàng này?</h2><p>Bạn có thể hủy khi đơn còn chờ xác nhận. Sản phẩm sẽ được hoàn lại tồn kho. Lượt sử dụng mã giảm giá vẫn được tính.</p></div>
+            <form asp-action="Cancel" asp-route-id="@Model.Id" method="post">
+                <input type="hidden" name="confirmation" value="@action.Confirmation" />
+                <div class="form-check"><input class="form-check-input" type="checkbox" name="confirmed" value="true" id="confirm-cancel" required /><label class="form-check-label" for="confirm-cancel">Tôi xác nhận muốn hủy đơn hàng này.</label></div>
+                <button class="btn btn-outline-danger" type="submit">@action.Label</button>
+            </form>
+        </section>
+    }
+    <div class="purchase-order-help"><p>Bạn có thể theo dõi các đơn đã mua trong tài khoản của mình.</p><a asp-controller="Catalog" asp-action="Index">Tiếp tục khám phá nông sản <span aria-hidden="true">→</span></a></div>
+</section>

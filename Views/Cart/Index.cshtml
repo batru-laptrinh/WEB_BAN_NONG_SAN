@@ -2,40 +2,73 @@
 @model WEB_BAN_NONG_SAN.ViewModels.CartViewModel
 @{
     ViewData["Title"] = "Giỏ hàng";
+    var culture = CultureInfo.GetCultureInfo("vi-VN");
 }
-<section class="commerce-page">
-    <div class="commerce-heading"><div><p class="eyebrow">MUA SẮM CÙNG NÔNG SẢN</p><h1>Giỏ hàng của bạn</h1><p>Kiểm tra số lượng trước khi chọn địa chỉ và đặt hàng COD.</p></div><a class="btn btn-outline-secondary" asp-controller="Catalog" asp-action="Index">Tiếp tục mua sắm</a></div>
+<section class="purchase-page purchase-cart">
+    <nav class="store-breadcrumb" aria-label="Đường dẫn"><a asp-controller="Home" asp-action="Index">Trang chủ</a><span aria-hidden="true">/</span><a asp-controller="Catalog" asp-action="Index">Cửa hàng</a><span aria-hidden="true">/</span><span>Giỏ hàng</span></nav>
+    <header class="purchase-heading">
+        <div><p class="store-eyebrow">BỮA ĂN BẮT ĐẦU TỪ LỰA CHỌN CỦA BẠN</p><h1>Giỏ hàng của bạn</h1><p>Kiểm tra sản phẩm và số lượng trước khi chọn địa chỉ giao hàng.</p></div>
+        <a class="purchase-back-link" asp-controller="Catalog" asp-action="Index">Tiếp tục mua sắm <span aria-hidden="true">→</span></a>
+    </header>
+    <ol class="purchase-steps" aria-label="Các bước đặt hàng">
+        <li class="is-current" aria-current="step"><span>1</span><strong>Giỏ hàng</strong></li>
+        <li><span>2</span><strong>Xác nhận &amp; thanh toán</strong></li>
+        <li><span>3</span><strong>Theo dõi đơn hàng</strong></li>
+    </ol>
     @if (TempData["SuccessMessage"] is string success) { <div class="alert alert-success" role="status">@success</div> }
     @if (TempData["ErrorMessage"] is string error) { <div class="alert alert-warning" role="alert">@error</div> }
     @if (!Model.IsAvailable)
     {
-        <div class="alert alert-warning">Chưa tải được giỏ hàng. Vui lòng thử lại sau.</div>
+        <div class="purchase-empty" role="status"><span class="purchase-empty-number" aria-hidden="true">!</span><h2>Chưa tải được giỏ hàng</h2><p>Vui lòng thử lại sau. Bạn có thể tải lại để kiểm tra các sản phẩm đã chọn.</p><a class="store-button store-button-outline" asp-action="Index">Tải lại giỏ hàng</a></div>
     }
     else if (Model.Items.Count == 0)
     {
-        <div class="commerce-empty"><h2>Giỏ hàng đang trống</h2><p>Khám phá sản phẩm đang bán và chọn những món phù hợp cho gia đình.</p><a class="btn btn-primary" asp-controller="Catalog" asp-action="Index">Xem sản phẩm</a></div>
+        <div class="purchase-empty"><span class="purchase-empty-number" aria-hidden="true">0</span><h2>Giỏ hàng đang trống</h2><p>Khám phá rau củ, trái cây và những sản phẩm nông sản đang có tại cửa hàng.</p><a class="store-button" asp-controller="Catalog" asp-action="Index">Xem sản phẩm <span aria-hidden="true">→</span></a></div>
     }
     else
     {
-        <div class="row g-4"><div class="col-lg-8">
-            @foreach (var item in Model.Items)
-            {
-                <article class="commerce-card mb-3 p-4">
-                    <div class="d-flex flex-wrap justify-content-between gap-3"><div><h2 class="h5">@if (item.IsAvailable) { <a asp-controller="Catalog" asp-action="Details" asp-route-id="@item.ProductId">@item.Name</a> } else { @item.Name }</h2><p>@item.UnitPrice.ToString("N2", CultureInfo.GetCultureInfo("vi-VN")) đ / @item.Unit</p></div><strong>@item.LineTotal.ToString("N2", CultureInfo.GetCultureInfo("vi-VN")) đ</strong></div>
-                    @if (!item.IsAvailable) { <p class="text-danger">Sản phẩm ngừng bán hoặc số lượng vượt tồn kho. Vui lòng điều chỉnh hoặc xóa.</p> }
-                    <div class="d-flex flex-wrap align-items-end gap-3">
-                        <form asp-action="Update" asp-route-id="@item.Id" method="post" class="d-flex align-items-end gap-2">
-                            <input type="hidden" name="MutationToken" value="@item.MutationToken" />
-                            <div><label class="form-label" for="quantity-@item.Id">Số lượng (@item.Unit)</label><input class="form-control" type="number" id="quantity-@item.Id" name="Quantity" value="@item.Quantity" min="1" max="1000" required style="max-width:9rem" /></div>
-                            <button class="btn btn-outline-secondary" type="submit">Cập nhật</button>
-                        </form>
-                        <form asp-action="Remove" asp-route-id="@item.Id" method="post"><input type="hidden" name="mutationToken" value="@item.MutationToken" /><button class="btn btn-outline-danger" type="submit">Xóa</button></form>
-                    </div>
-                </article>
-            }
-        </div><aside class="col-lg-4"><div class="commerce-card p-4"><h2 class="h4">Tạm tính</h2><p class="fs-3 fw-semibold">@Model.Subtotal.ToString("N2", CultureInfo.GetCultureInfo("vi-VN")) đ</p><p>Phí vận chuyển và giảm giá được hiển thị tại bước thanh toán.</p>
-            @if (Model.CanCheckout) { <a class="btn btn-primary w-100" asp-controller="Checkout" asp-action="Index">Tiến hành đặt hàng</a> }
-            else { <p class="alert alert-warning">Vui lòng xử lý các sản phẩm không khả dụng để tiếp tục.</p> }
-        </div></aside></div>
+        <div class="purchase-layout">
+            <section class="purchase-cart-list" aria-labelledby="cart-items-title">
+                <div class="purchase-list-heading"><h2 id="cart-items-title">Sản phẩm đã chọn</h2><span>@Model.Items.Count sản phẩm</span></div>
+                @foreach (var item in Model.Items)
+                {
+                    var imageMissing = string.IsNullOrWhiteSpace(item.ImagePath);
+                    <article class="purchase-cart-item" aria-labelledby="cart-name-@item.Id">
+                        <figure class="purchase-cart-picture">
+                            <img data-product-image data-fallback-src="@Url.Content("~/images/agriculture-harvest.webp")" src="@(imageMissing ? Url.Content("~/images/agriculture-harvest.webp") : item.ImagePath)" alt="@(imageMissing ? "Chưa có ảnh sản phẩm — ảnh minh họa nông sản" : item.Name)" loading="lazy" width="160" height="160" />
+                            @if (imageMissing) { <figcaption>Ảnh minh họa</figcaption> }
+                        </figure>
+                        <div class="purchase-cart-information">
+                            <p class="purchase-item-meta">NÔNG SẢN · @item.Unit</p>
+                            <h3 id="cart-name-@item.Id">@if (item.IsAvailable) { <a asp-controller="Catalog" asp-action="Details" asp-route-id="@item.ProductId">@item.Name</a> } else { @item.Name }</h3>
+                            <p class="purchase-unit-price">@item.UnitPrice.ToString("N2", culture) ₫ <span>/ @item.Unit</span></p>
+                            @if (!item.IsAvailable)
+                            {
+                                <p class="purchase-stock-warning" role="status">Sản phẩm ngừng bán hoặc số lượng vượt tồn kho. Vui lòng điều chỉnh hoặc xóa.</p>
+                            }
+                            else { <p class="purchase-stock-ready"><span aria-hidden="true"></span>Còn hàng</p> }
+                            <div class="purchase-cart-controls">
+                                <form asp-action="Update" asp-route-id="@item.Id" method="post" class="purchase-quantity-form">
+                                    <input type="hidden" name="MutationToken" value="@item.MutationToken" />
+                                    <div><label for="quantity-@item.Id">Số lượng (@item.Unit)</label><input class="form-control" type="number" id="quantity-@item.Id" name="Quantity" value="@item.Quantity" min="1" max="1000" required inputmode="numeric" /></div>
+                                    <button class="purchase-update-button" type="submit">Cập nhật</button>
+                                </form>
+                                <form asp-action="Remove" asp-route-id="@item.Id" method="post" class="purchase-remove-form"><input type="hidden" name="mutationToken" value="@item.MutationToken" /><button type="submit" aria-label="Xóa @item.Name khỏi giỏ hàng">Xóa</button></form>
+                            </div>
+                        </div>
+                        <div class="purchase-line-total"><span>Thành tiền</span><strong>@item.LineTotal.ToString("N2", culture) ₫</strong></div>
+                    </article>
+                }
+                <p class="purchase-subtle-note">Giá và tồn kho được kiểm tra lại khi đặt hàng. Sản phẩm trong giỏ chưa được giữ chỗ.</p>
+            </section>
+            <aside class="purchase-summary" aria-labelledby="cart-summary-title">
+                <p class="store-eyebrow">THÔNG TIN ĐƠN HÀNG</p><h2 id="cart-summary-title">Tạm tính</h2>
+                <dl class="purchase-totals"><dt>@Model.Items.Count sản phẩm</dt><dd>@Model.Subtotal.ToString("N2", culture) ₫</dd><dt class="purchase-total-label">Tiền hàng</dt><dd class="purchase-total-value">@Model.Subtotal.ToString("N2", culture) ₫</dd></dl>
+                <p class="purchase-subtle-note">Phí giao hàng và giảm giá sẽ được hiển thị ở bước xác nhận đơn hàng.</p>
+                @if (Model.CanCheckout) { <a class="store-button w-100" asp-controller="Checkout" asp-action="Index">Tiến hành đặt hàng <span aria-hidden="true">→</span></a> }
+                else { <p class="alert alert-warning mb-0">Vui lòng xử lý các sản phẩm không khả dụng để tiếp tục.</p> }
+                <div class="purchase-cod-note"><span class="purchase-cod-mark" aria-hidden="true">COD</span><p><strong>Thanh toán khi nhận hàng</strong><span>Kiểm tra lại thông tin trước khi xác nhận đặt đơn.</span></p></div>
+            </aside>
+        </div>
     }
 </section>

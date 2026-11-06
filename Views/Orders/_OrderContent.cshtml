@@ -4,20 +4,20 @@
 @{
     var culture = CultureInfo.GetCultureInfo("vi-VN");
 }
-<div class="row g-4">
+<div class="row g-4 purchase-order-content">
     <section class="col-lg-7" aria-labelledby="order-items-heading">
-        <div class="card h-100 border-0 shadow-sm"><div class="card-body">
+        <div class="card h-100 border-0 shadow-sm purchase-panel"><div class="card-body">
             <h2 id="order-items-heading" class="h5">Sản phẩm trong đơn</h2>
-            <div class="table-responsive"><table class="table align-middle">
+            <div class="table-responsive"><table class="table align-middle purchase-order-table"><caption class="visually-hidden">Sản phẩm và giá đã lưu tại thời điểm đặt hàng</caption>
                 <thead><tr><th scope="col">Sản phẩm</th><th scope="col">Số lượng</th><th scope="col" class="text-end">Thành tiền</th></tr></thead>
                 <tbody>
                 @foreach (var item in Model.Items)
                 {
-                    <tr><td class="text-break"><strong>@item.ProductName</strong><br /><small>@item.UnitPrice.ToString("#,##0.##", culture) ₫ / @item.Unit</small></td><td>@item.Quantity</td><td class="text-end text-nowrap">@item.LineTotal.ToString("#,##0.##", culture) ₫</td></tr>
+                    <tr><td class="text-break" data-label="Sản phẩm"><strong>@item.ProductName</strong><br /><small>@item.UnitPrice.ToString("#,##0.##", culture) ₫ / @item.Unit</small></td><td data-label="Số lượng">@item.Quantity</td><td class="text-end text-nowrap" data-label="Thành tiền">@item.LineTotal.ToString("#,##0.##", culture) ₫</td></tr>
                 }
                 </tbody>
             </table></div>
-            <dl class="row mb-0">
+            <dl class="row mb-0 purchase-order-totals">
                 <dt class="col-7">Tiền sản phẩm</dt><dd class="col-5 text-end">@Model.Subtotal.ToString("#,##0.##", culture) ₫</dd>
                 <dt class="col-7">Phí giao hàng</dt><dd class="col-5 text-end">@Model.ShippingFee.ToString("#,##0.##", culture) ₫</dd>
                 <dt class="col-7">Giảm giá @Model.CouponCode</dt><dd class="col-5 text-end">−@Model.Discount.ToString("#,##0.##", culture) ₫</dd>
@@ -27,14 +27,14 @@
         </div></div>
     </section>
     <section class="col-lg-5" aria-labelledby="order-delivery-heading">
-        <div class="card border-0 shadow-sm"><div class="card-body">
+        <div class="card border-0 shadow-sm purchase-panel"><div class="card-body">
             <h2 id="order-delivery-heading" class="h5">Thông tin giao hàng</h2>
             <p class="fw-bold mb-1 text-break">@Model.RecipientName</p>
             <p class="mb-2">@Model.PhoneNumber</p>
             <p class="text-break">@Model.AddressLine, @Model.Ward@if (!string.IsNullOrWhiteSpace(Model.District)) {<text>, @Model.District</text>}, @Model.Province</p>
             @if (!string.IsNullOrWhiteSpace(Model.DeliveryNote)) {<p class="text-break"><strong>Ghi chú:</strong> @Model.DeliveryNote</p>}
             <hr /><p><strong>Phương thức:</strong> Thanh toán khi nhận hàng (COD)</p>
-            <p class="mb-1">@OrderDisplay.Payment(Model.PaymentStatus)</p>
+            <p class="mb-1 purchase-payment-state">@OrderDisplay.Payment(Model.PaymentStatus)</p>
             @if (Model.CompletedAtUtc.HasValue) {<p class="small mb-0">Hoàn thành: @Model.CompletedAtUtc.Value.AddHours(7).ToString("dd/MM/yyyy HH:mm") (GMT+7)</p>}
         </div></div>
     </section>

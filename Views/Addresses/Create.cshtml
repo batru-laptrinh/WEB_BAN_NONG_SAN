@@ -2,8 +2,9 @@
 @{ ViewData["Title"] = "Thêm địa chỉ giao hàng"; }
 @section Styles { <link rel="stylesheet" href="~/css/addresses.css" asp-append-version="true" /> }
 <section class="address-page address-form-page">
-    <a asp-action="Index" class="address-back">← Sổ địa chỉ</a>
+    <nav class="address-breadcrumb" aria-label="Đường dẫn"><a asp-controller="Profile" asp-action="Index">Tài khoản</a><span aria-hidden="true">/</span><a asp-action="Index">Sổ địa chỉ</a><span aria-hidden="true">/</span><span aria-current="page">Thêm mới</span></nav>
     <p class="address-eyebrow">THÊM NƠI NHẬN HÀNG</p><h1>Địa chỉ giao hàng mới</h1><p class="address-intro">Nhập địa chỉ hiện hành của bạn. Các trường có dấu * là bắt buộc. Mỗi tài khoản lưu tối đa 50 địa chỉ.</p>
+    <div class="address-section-note"><strong>Địa chỉ đầy đủ giúp giao hàng thuận tiện</strong><p>Ghi rõ số nhà, đường hoặc thôn/xóm. Quận/huyện hoặc địa danh trung gian có thể để trống.</p></div>
     <form asp-action="Create" method="post" class="address-form-card">
         <partial name="_Form" model="Model" />
         <div class="address-form-actions"><button class="address-button" type="submit">Lưu địa chỉ</button><a asp-action="Index" class="address-button address-button-secondary">Hủy</a></div>

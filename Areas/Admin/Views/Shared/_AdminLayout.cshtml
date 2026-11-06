@@ -18,10 +18,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>@ViewData["Title"] · Quản trị WEB_BAN_NONG_SAN</title>
-    <link rel="icon" href="~/favicon.ico" />
+    <partial name="/Views/Shared/_Favicon.cshtml" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/commerce.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/brand.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="admin-body">
@@ -31,8 +32,8 @@
         <aside class="offcanvas-lg offcanvas-start admin-sidebar" tabindex="-1" id="admin-sidebar" aria-labelledby="admin-sidebar-title">
             <div class="admin-brand-row">
                 <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="admin-brand" aria-label="Nông sản — Tổng quan quản trị">
-                    <span class="admin-brand-mark"><svg class="admin-icon" aria-hidden="true"><use href="#admin-leaf"></use></svg></span>
-                    <span><span class="admin-brand-name" id="admin-sidebar-title">NÔNG SẢN</span><span class="admin-brand-caption">K H U &nbsp; Q U Ả N &nbsp; T R Ị</span></span>
+                    @{ var adminBrandData = new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData) { ["BrandContext"] = "Admin" }; }
+                    <partial name="/Views/Shared/_Brand.cshtml" view-data="adminBrandData" />
                 </a>
                 <button type="button" class="btn-close d-lg-none" data-bs-dismiss="offcanvas" data-bs-target="#admin-sidebar" aria-label="Đóng menu quản trị"></button>
             </div>

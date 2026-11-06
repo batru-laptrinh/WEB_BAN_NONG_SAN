@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Data.Sqlite;
@@ -130,6 +131,7 @@ public sealed class StorefrontTests
         await using var app = new StoreApplication();
         var seed = await app.SeedAsync();
         using var client = app.NewClient();
+        await app.SignInAsync(client);
         var html = await client.GetStringAsync($"/Catalog/Details/{seed.Carrot}");
         Assert.Contains("/Cart/Add", html);
         Assert.Contains("name=\"__RequestVerificationToken\"", html);
@@ -137,7 +139,8 @@ public sealed class StorefrontTests
         Assert.Contains("name=\"quantity\"", html);
         Assert.Contains("&lt;script&gt;", html);
         Assert.DoesNotContain("<script>unsafe()</script>", html);
-        Assert.Contains("/images/product-placeholder", html);
+        Assert.Contains("/images/agriculture-harvest.webp", html);
+        Assert.Contains("Ảnh minh họa", WebUtility.HtmlDecode(html));
     }
 
     [Fact]
@@ -165,8 +168,12 @@ public sealed class StorefrontTests
         using var client = app.NewClient();
         var html = WebUtility.HtmlDecode(await client.GetStringAsync($"/Catalog/Details/{seed.Cabbage}"));
         Assert.Contains("Sản phẩm tạm hết hàng", html);
-        Assert.DoesNotContain("/Cart/Add", html);
-        Assert.DoesNotContain("name=\"quantity\"", html);
+        // Related products may be available and have their own quick-add forms.
+        // The product being viewed must still offer no purchase controls.
+        var mainProduct = Regex.Match(html, "<article class=\"store-product-detail\">[\\s\\S]*?</article>");
+        Assert.True(mainProduct.Success, "Expected the main product details region.");
+        Assert.DoesNotContain("/Cart/Add", mainProduct.Value);
+        Assert.DoesNotContain("name=\"quantity\"", mainProduct.Value);
     }
 
     [Theory]
@@ -222,6 +229,25 @@ public sealed class StorefrontTests
             });
         }
         public HttpClient NewClient() => CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false, BaseAddress = new Uri("https://localhost") });
+        public async Task SignInAsync(HttpClient client)
+        {
+            var password = Guid.NewGuid().ToString("N") + "!aA1";
+            const string email = "storefront-buyer@example.invalid";
+            using (var scope = Services.CreateScope())
+            {
+                var users = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                var user = new ApplicationUser { UserName = email, Email = email, FullName = "Khách kiểm thử giao diện" };
+                Assert.True((await users.CreateAsync(user, password)).Succeeded);
+                Assert.True((await users.AddToRoleAsync(user, "Customer")).Succeeded);
+            }
+            var login = await client.GetStringAsync("/Account/Login");
+            var token = WebUtility.HtmlDecode(Regex.Match(login, "name=\"__RequestVerificationToken\"[^>]*value=\"([^\"]+)\"").Groups[1].Value);
+            var response = await client.PostAsync("/Account/Login", new FormUrlEncodedContent(new Dictionary<string, string>
+            {
+                ["Email"] = email, ["Password"] = password, ["__RequestVerificationToken"] = token
+            }));
+            Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        }
         public async Task<(int Vegetables, int Carrot, int Cabbage, int Apple, int Inactive, int HiddenCategory)> SeedAsync()
         {
             using var scope = Services.CreateScope();

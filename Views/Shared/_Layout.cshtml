@@ -1,39 +1,56 @@
+@inject Microsoft.Extensions.Configuration.IConfiguration SiteConfiguration
+@{
+    var activeController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var contactEmail = SiteConfiguration["Shop:ContactEmail"];
+    var contactPhone = SiteConfiguration["Shop:ContactPhone"];
+    var contactAddress = SiteConfiguration["Shop:ContactAddress"];
+}
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="store-root">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#6F4E37" />
     <title>@ViewData["Title"] · Nông Sản</title>
-    <link rel="icon" href="~/favicon.ico" />
+    <partial name="_Favicon" />
+    <link rel="preload" href="~/fonts/be-vietnam-pro/BeVietnamPro-Regular.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WEB_BAN_NONG_SAN.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/commerce.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/brand.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/store.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/catalog.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/account.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/purchase.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body class="store-body">
     <a href="#store-main" class="store-skip-link">Đến nội dung chính</a>
-    <div class="store-topline"><div class="container"><span>Nông sản cho bữa ăn mỗi ngày</span><span>Thanh toán khi nhận hàng · COD</span></div></div>
+    <partial name="_StoreIcons" />
+    <div class="store-topline"><div class="container"><span>Rau củ, trái cây &amp; nông sản Việt</span><span>Thanh toán khi nhận hàng · COD</span></div></div>
     <header class="store-header">
-        <nav class="navbar navbar-expand-lg" aria-label="Điều hướng chính">
-            <div class="container store-nav-inner">
-                <a class="store-brand" asp-area="" asp-controller="Home" asp-action="Index" aria-label="Nông Sản — Trang chủ">
-                    <span class="store-brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M26 5C12 3 5 10 8 19c8 3 17-2 18-14Z" /><path d="M5 28 21 11" /></svg></span>
-                    <span>NÔNG SẢN<small>TỪ ĐẤT LÀNH, ĐẾN BẾP NHÀ</small></span>
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#store-navigation" aria-controls="store-navigation" aria-expanded="false" aria-label="Mở menu"><span class="navbar-toggler-icon"></span></button>
+        <div class="container store-header-main">
+            <a class="store-brand" asp-area="" asp-controller="Home" asp-action="Index" aria-label="Nông Sản — Trang chủ"><partial name="_Brand" /></a>
+            <form asp-area="" asp-controller="Catalog" asp-action="Index" method="get" role="search" class="store-search" data-testid="header-search">
+                <label class="visually-hidden" for="header-product-search">Tìm kiếm sản phẩm</label>
+                <input id="header-product-search" type="search" name="q" value="@Context.Request.Query["q"]" maxlength="100" placeholder="Tìm rau củ, trái cây, nông sản…" />
+                <button type="submit" aria-label="Tìm kiếm sản phẩm"><svg class="store-icon" aria-hidden="true"><use href="#store-search-icon"></use></svg><span>Tìm kiếm</span></button>
+            </form>
+            <div class="store-header-actions">
+                <a class="store-cart-link" aria-label="Giỏ hàng" asp-area="" asp-controller="Cart" asp-action="Index"><svg class="store-icon" aria-hidden="true"><use href="#store-bag-icon"></use></svg><span>Giỏ hàng<small>Sản phẩm bạn đã chọn</small></span></a>
+                <button class="navbar-toggler store-menu-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#store-navigation" aria-controls="store-navigation" aria-expanded="false" aria-label="Mở menu"><span></span><span></span><span></span></button>
+            </div>
+        </div>
+        <nav class="store-navbar navbar-expand-lg" aria-label="Điều hướng chính">
+            <div class="container">
                 <div id="store-navigation" class="collapse navbar-collapse">
-                    <ul class="navbar-nav store-nav-links ms-lg-auto">
-                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Catalog" asp-action="Index">Cửa hàng</a></li>
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-                            <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Profile" asp-action="Index">Tài khoản</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Orders" asp-action="Index">Đơn hàng</a></li>
-                        }
-                        <li class="nav-item"><a class="nav-link store-cart-link" asp-area="" asp-controller="Cart" asp-action="Index"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14l-1 13H6L5 7Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>Giỏ hàng</a></li>
+                    <ul class="navbar-nav store-nav-links">
+                        <li class="nav-item"><a class="nav-link @(activeController == "Home" ? "is-active" : "")" aria-current="@(activeController == "Home" ? "page" : null)" asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a></li>
+                        <li class="nav-item"><a class="nav-link @(activeController == "Catalog" ? "is-active" : "")" aria-current="@(activeController == "Catalog" ? "page" : null)" asp-area="" asp-controller="Catalog" asp-action="Index">Cửa hàng</a></li>
+                        <li class="nav-item">@await Component.InvokeAsync("StoreCategories")</li>
+                        <li class="nav-item"><a class="nav-link @(activeController is "Profile" or "Addresses" ? "is-active" : "")" asp-area="" asp-controller="Profile" asp-action="Index">Tài khoản</a></li>
+                        <li class="nav-item"><a class="nav-link @(activeController == "Orders" ? "is-active" : "")" asp-area="" asp-controller="Orders" asp-action="Index">Đơn hàng</a></li>
                     </ul>
                     <div class="store-account"><partial name="_LoginPartial" /></div>
                 </div>
@@ -43,12 +60,16 @@
     <main id="store-main" class="container store-main" tabindex="-1">@RenderBody()</main>
     <footer class="store-footer">
         <div class="container store-footer-grid">
-            <div><a class="store-footer-brand" asp-area="" asp-controller="Home" asp-action="Index">NÔNG SẢN</a><p>Một lựa chọn gần gũi cho căn bếp.<br />Khám phá nông sản, mua sắm thật dễ dàng.</p></div>
-            <nav aria-label="Liên kết cửa hàng"><strong>Khám phá</strong><a asp-area="" asp-controller="Catalog" asp-action="Index">Tất cả sản phẩm</a><a asp-area="" asp-controller="Cart" asp-action="Index">Giỏ hàng của bạn</a><a asp-area="" asp-controller="Home" asp-action="Privacy">Quyền riêng tư</a></nav>
-            <nav aria-label="Liên kết tài khoản"><strong>Tài khoản</strong><a asp-area="" asp-controller="Profile" asp-action="Index">Hồ sơ cá nhân</a><a asp-area="" asp-controller="Addresses" asp-action="Index">Địa chỉ giao hàng</a><a asp-area="" asp-controller="Orders" asp-action="Index">Theo dõi đơn hàng</a></nav>
-            <div class="store-footer-note"><strong>Mua sắm an tâm</strong><p>Kiểm tra đơn hàng trước khi xác nhận. Thanh toán COD khi nhận hàng.</p><span>Gọn trong thao tác, trọn trong bữa ăn.</span></div>
+            <div class="store-footer-about"><a class="store-footer-brand" asp-area="" asp-controller="Home" asp-action="Index"><partial name="_Brand" /></a><p>Rau củ, trái cây và nông sản cho bữa ăn gia đình. Chọn sản phẩm phù hợp, đặt hàng thuận tiện và thanh toán khi nhận.</p><span class="store-footer-cod"><svg class="store-icon" aria-hidden="true"><use href="#store-card-icon"></use></svg>Thanh toán khi nhận hàng</span></div>
+            <nav aria-label="Danh mục cửa hàng"><strong>Danh mục nông sản</strong>@await Component.InvokeAsync("StoreCategories", new { variant = "footer" })</nav>
+            <nav aria-label="Hỗ trợ mua sắm"><strong>Mua sắm &amp; tài khoản</strong><a asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="huong-dan-mua-hang">Hướng dẫn mua hàng</a><a asp-area="" asp-controller="Cart" asp-action="Index">Giỏ hàng</a><a asp-area="" asp-controller="Orders" asp-action="Index">Theo dõi đơn hàng</a><a asp-area="" asp-controller="Profile" asp-action="Index">Hồ sơ cá nhân</a><a asp-area="" asp-controller="Addresses" asp-action="Index">Địa chỉ giao hàng</a></nav>
+            <div class="store-footer-note"><strong>Thông tin cửa hàng</strong><a asp-area="" asp-controller="Home" asp-action="Privacy">Quyền riêng tư</a><p>Kiểm tra thông tin sản phẩm và tổng thanh toán trước khi xác nhận đơn.</p>
+                @if (!string.IsNullOrWhiteSpace(contactPhone)) { <p>@contactPhone</p> }
+                @if (!string.IsNullOrWhiteSpace(contactEmail)) { <p>@contactEmail</p> }
+                @if (!string.IsNullOrWhiteSpace(contactAddress)) { <p>@contactAddress</p> }
+            </div>
         </div>
-        <div class="container store-footer-bottom"><span>© @DateTime.UtcNow.Year WEB_BAN_NONG_SAN</span><span>Được chăm chút cho từng trải nghiệm.</span></div>
+        <div class="container store-footer-bottom"><span>© @DateTime.UtcNow.Year NÔNG SẢN · WEB_BAN_NONG_SAN</span><a asp-area="" asp-controller="Catalog" asp-action="Index">Khám phá cửa hàng <span aria-hidden="true">→</span></a></div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

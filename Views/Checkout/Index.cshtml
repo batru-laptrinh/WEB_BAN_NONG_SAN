@@ -2,51 +2,64 @@
 @model WEB_BAN_NONG_SAN.ViewModels.CheckoutViewModel
 @{
     ViewData["Title"] = "Đặt hàng COD";
+    var culture = CultureInfo.GetCultureInfo("vi-VN");
 }
-<section class="commerce-page">
-    <div class="commerce-heading"><div><p class="eyebrow">BƯỚC CUỐI CÙNG</p><h1>Xác nhận đơn hàng</h1><p>Thanh toán bằng tiền mặt khi nhận hàng (COD).</p></div><a class="btn btn-outline-secondary" asp-controller="Cart" asp-action="Index">Trở lại giỏ hàng</a></div>
-    <div asp-validation-summary="All" class="text-danger" role="alert"></div>
-    @if (!Model.IsAvailable) { <div class="alert alert-warning">Chưa tải được dữ liệu đặt hàng. Vui lòng thử lại sau.</div> }
+<section class="purchase-page purchase-checkout">
+    <nav class="store-breadcrumb" aria-label="Đường dẫn"><a asp-controller="Home" asp-action="Index">Trang chủ</a><span aria-hidden="true">/</span><a asp-controller="Cart" asp-action="Index">Giỏ hàng</a><span aria-hidden="true">/</span><span>Xác nhận đơn hàng</span></nav>
+    <header class="purchase-heading"><div><p class="store-eyebrow">THÊM MỘT BƯỚC ĐẾN BỮA ĂN GIA ĐÌNH</p><h1>Xác nhận đơn hàng</h1><p>Chọn địa chỉ nhận hàng và kiểm tra tổng tiền trước khi đặt đơn COD.</p></div><a class="purchase-back-link" asp-controller="Cart" asp-action="Index">← Trở lại giỏ hàng</a></header>
+    <ol class="purchase-steps" aria-label="Các bước đặt hàng"><li class="is-complete"><span aria-hidden="true">✓</span><a asp-controller="Cart" asp-action="Index">Giỏ hàng</a></li><li class="is-current" aria-current="step"><span>2</span><strong>Xác nhận &amp; thanh toán</strong></li><li><span>3</span><strong>Theo dõi đơn hàng</strong></li></ol>
+    <div asp-validation-summary="All" class="purchase-validation text-danger" role="alert"></div>
+    @if (!Model.IsAvailable)
+    {
+        <div class="purchase-empty" role="status"><span class="purchase-empty-number" aria-hidden="true">!</span><h2>Chưa tải được dữ liệu đặt hàng</h2><p>Vui lòng thử lại sau để kiểm tra thông tin đơn hàng của bạn.</p><a class="store-button store-button-outline" asp-action="Index">Tải lại trang</a></div>
+    }
     else if (!Model.Cart.CanCheckout)
     {
-        <div class="alert alert-warning">Giỏ hàng đang trống hoặc có sản phẩm không khả dụng. Vui lòng kiểm tra lại.</div>
-        <a class="btn btn-primary" asp-controller="Cart" asp-action="Index">Kiểm tra giỏ hàng</a>
+        <div class="purchase-empty" role="status"><span class="purchase-empty-number" aria-hidden="true">!</span><h2>Giỏ hàng cần được kiểm tra lại</h2><p>Giỏ hàng đang trống hoặc có sản phẩm không khả dụng. Vui lòng kiểm tra lại.</p><a class="store-button" asp-controller="Cart" asp-action="Index">Kiểm tra giỏ hàng</a></div>
     }
     else
     {
-        <div class="row g-4"><div class="col-lg-7">
-            <div class="commerce-card p-4 mb-4"><h2 class="h4">Mã giảm giá</h2>
-                <form asp-action="Index" method="get" class="d-flex gap-2"><label class="visually-hidden" for="couponCode">Mã giảm giá</label><input id="couponCode" class="form-control" name="couponCode" value="@Model.Input.CouponCode" maxlength="50" placeholder="Nhập mã nếu có" /><button class="btn btn-outline-secondary" type="submit">Kiểm tra</button></form>
-                @if (Model.CouponMessage is not null) { <p class="mt-2 mb-0" role="status">@Model.CouponMessage</p> }
-            </div>
-            <form asp-action="PlaceOrder" method="post" id="checkout-form" class="commerce-card p-4">
+        <div class="purchase-checkout-layout">
+            <aside class="purchase-checkout-summary">
+                <section class="purchase-panel purchase-checkout-products" aria-labelledby="checkout-products-title">
+                    <div class="purchase-panel-heading"><div><p class="store-eyebrow">KIỂM TRA LỰA CHỌN CỦA BẠN</p><h2 id="checkout-products-title">Đơn hàng của bạn</h2></div><span class="purchase-count">@Model.Cart.Items.Count</span></div>
+                    @foreach (var item in Model.Cart.Items)
+                    {
+                        var imageMissing = string.IsNullOrWhiteSpace(item.ImagePath);
+                        <div class="purchase-checkout-item">
+                            <figure><img data-product-image data-fallback-src="@Url.Content("~/images/agriculture-harvest.webp")" src="@(imageMissing ? Url.Content("~/images/agriculture-harvest.webp") : item.ImagePath)" alt="@(imageMissing ? "Chưa có ảnh sản phẩm — ảnh minh họa nông sản" : item.Name)" loading="lazy" width="72" height="72" />@if (imageMissing) { <figcaption>Minh họa</figcaption> }</figure>
+                            <div><strong>@item.Name</strong><span>@item.Quantity @item.Unit × @item.UnitPrice.ToString("N2", culture) ₫</span></div><b>@item.LineTotal.ToString("N2", culture) ₫</b>
+                        </div>
+                    }
+                    <dl class="purchase-totals"><dt>Tạm tính</dt><dd>@Model.Cart.Subtotal.ToString("N2", culture) ₫</dd><dt>Phí vận chuyển cố định</dt><dd>@Model.ShippingFee.ToString("N2", culture) ₫</dd><dt>Giảm giá</dt><dd class="purchase-discount">−@Model.Discount.ToString("N2", culture) ₫</dd><dt class="purchase-total-label">Tổng thanh toán</dt><dd class="purchase-total-value">@Model.Total.ToString("N2", culture) ₫</dd></dl>
+                    <p class="purchase-subtle-note">COD · Chưa thanh toán. Không yêu cầu thông tin thẻ hoặc chuyển khoản trực tuyến.</p>
+                </section>
+                <section class="purchase-panel purchase-coupon" aria-labelledby="coupon-heading"><h2 id="coupon-heading">Bạn có mã giảm giá?</h2><p>Nhập mã để kiểm tra điều kiện áp dụng cho đơn hàng.</p>
+                    <form asp-action="Index" method="get"><label class="visually-hidden" for="couponCode">Mã giảm giá</label><input id="couponCode" class="form-control" name="couponCode" value="@Model.Input.CouponCode" maxlength="50" placeholder="Nhập mã giảm giá" autocomplete="off" /><button class="store-button store-button-outline" type="submit">Kiểm tra</button></form>
+                    @if (Model.CouponMessage is not null) { <p class="purchase-coupon-message" role="status">@Model.CouponMessage</p> }
+                </section>
+            </aside>
+            <form asp-action="PlaceOrder" method="post" id="checkout-form" class="purchase-panel purchase-address-panel">
                 <input asp-for="Input.CheckoutToken" type="hidden" /><input asp-for="Input.CouponCode" type="hidden" />
-                <h2 class="h4">Địa chỉ nhận hàng</h2>
+                <div class="purchase-panel-heading"><div><p class="store-eyebrow">THÔNG TIN GIAO HÀNG</p><h2>Địa chỉ nhận hàng</h2></div><span class="purchase-panel-number" aria-hidden="true">01</span></div>
                 @if (Model.Addresses.Count == 0)
                 {
-                    <p>Vui lòng thêm địa chỉ nhận hàng trước khi đặt đơn.</p><a class="btn btn-primary" asp-controller="Addresses" asp-action="Create">Thêm địa chỉ giao hàng</a>
+                    <div class="purchase-address-empty"><h3>Bạn chưa có địa chỉ giao hàng</h3><p>Vui lòng thêm địa chỉ nhận hàng trước khi đặt đơn.</p><a class="store-button" asp-controller="Addresses" asp-action="Create">Thêm địa chỉ giao hàng</a></div>
                 }
                 else
                 {
-                    <fieldset><legend class="visually-hidden">Chọn địa chỉ nhận hàng</legend>
+                    <fieldset class="purchase-address-options"><legend class="visually-hidden">Chọn địa chỉ nhận hàng</legend>
                     @foreach (var address in Model.Addresses)
                     {
-                        <div class="form-check border rounded p-3 ps-5 mb-3"><input class="form-check-input" asp-for="Input.AddressId" type="radio" id="address-@address.Id" value="@address.Id" /><label class="form-check-label" for="address-@address.Id"><strong>@address.RecipientName</strong> · @address.PhoneNumber<br />@address.FullAddress @if (address.IsDefault) { <span class="badge text-bg-light">Mặc định</span> }</label></div>
+                        <div class="purchase-address-choice"><input class="form-check-input" asp-for="Input.AddressId" type="radio" id="address-@address.Id" value="@address.Id" /><label for="address-@address.Id"><span class="purchase-address-name">@address.RecipientName @if (address.IsDefault) { <span class="purchase-default-label">Mặc định</span> }</span><span class="purchase-address-phone">@address.PhoneNumber</span><span class="purchase-address-text">@address.FullAddress</span></label></div>
                     }
                     </fieldset>
-                    <p><a asp-controller="Addresses" asp-action="Index">Quản lý địa chỉ</a></p>
-                    <p class="small text-muted">Thông tin sản phẩm và địa chỉ được lưu theo thời điểm đặt hàng. Giá, tồn kho và mã giảm giá được kiểm tra lại trên máy chủ.</p>
-                    <button type="submit" class="btn btn-primary btn-lg w-100">Đặt hàng · Thanh toán khi nhận</button>
+                    <a class="purchase-manage-address" asp-controller="Addresses" asp-action="Index">Quản lý địa chỉ giao hàng <span aria-hidden="true">→</span></a>
+                    <div class="purchase-payment"><div><p class="store-eyebrow">PHƯƠNG THỨC THANH TOÁN</p><h2>Thanh toán khi nhận hàng</h2></div><span class="purchase-cod-mark" aria-hidden="true">COD</span><p>Bạn thanh toán bằng tiền mặt khi nhận đơn hàng. Không cần cung cấp thông tin thẻ.</p></div>
+                    <div class="purchase-confirm-box"><p>Thông tin sản phẩm và địa chỉ được lưu theo thời điểm đặt hàng. Giá, tồn kho và mã giảm giá được kiểm tra lại trên máy chủ.</p><button type="submit" class="store-button purchase-place-button">Đặt hàng · Thanh toán khi nhận <span aria-hidden="true">→</span></button><span>Vui lòng kiểm tra kỹ tên, số điện thoại và địa chỉ nhận hàng.</span></div>
                 }
             </form>
-        </div><aside class="col-lg-5"><div class="commerce-card p-4"><h2 class="h4">Đơn hàng của bạn</h2>
-            @foreach (var item in Model.Cart.Items)
-            {
-                <div class="d-flex justify-content-between gap-3 border-bottom py-3"><span>@item.Name <small class="d-block text-muted">@item.Quantity @item.Unit × @item.UnitPrice.ToString("N2", CultureInfo.GetCultureInfo("vi-VN")) đ</small></span><strong>@item.LineTotal.ToString("N2", CultureInfo.GetCultureInfo("vi-VN")) đ</strong></div>
-            }
-            <dl class="row mt-4"><dt class="col-7">Tạm tính</dt><dd class="col-5 text-end">@Model.Cart.Subtotal.ToString("N2", CultureInfo.GetCultureInfo("vi-VN")) đ</dd><dt class="col-7">Phí vận chuyển cố định</dt><dd class="col-5 text-end">@Model.ShippingFee.ToString("N2", CultureInfo.GetCultureInfo("vi-VN")) đ</dd><dt class="col-7">Giảm giá</dt><dd class="col-5 text-end">−@Model.Discount.ToString("N2", CultureInfo.GetCultureInfo("vi-VN")) đ</dd><dt class="col-7 fs-5">Tổng thanh toán</dt><dd class="col-5 text-end fw-bold fs-5">@Model.Total.ToString("N2", CultureInfo.GetCultureInfo("vi-VN")) đ</dd></dl>
-            <p class="small text-muted">COD · Chưa thanh toán. Không yêu cầu thông tin thẻ hoặc chuyển khoản trực tuyến.</p>
-        </div></aside></div>
+        </div>
     }
 </section>
 @section Scripts { <partial name="_ValidationScriptsPartial" /> }

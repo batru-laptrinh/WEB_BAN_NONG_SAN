@@ -268,6 +268,7 @@ public sealed class CheckoutService(
         Items = items.Select(x => new CartLineViewModel
         {
             Id = x.Id, ProductId = x.ProductId, Name = x.Product?.Name ?? "Sản phẩm không còn tồn tại",
+            ImagePath = x.Product?.ImagePath,
             Unit = x.Product?.Unit ?? "", UnitPrice = x.Product?.Price ?? 0, Quantity = x.Quantity,
             Stock = x.Product?.Stock ?? 0,
             IsAvailable = x.Product is not null && CanSell(x.Product) && x.Quantity is >= 1 and <= 1000 && x.Quantity <= x.Product.Stock,

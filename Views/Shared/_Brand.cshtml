@@ -1,0 +1,12 @@
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment BrandEnvironment
+@{
+    var isAdminBrand = string.Equals(ViewData["BrandContext"] as string, "Admin", StringComparison.Ordinal);
+    var hasOfficialLogo = BrandEnvironment.WebRootFileProvider.GetFileInfo("images/logo-nong-san.png").Exists;
+}
+<span class="brand-identity @(isAdminBrand ? "brand-identity-admin" : "")">
+    @if (hasOfficialLogo)
+    {
+        <img class="brand-logo" src="~/images/logo-nong-san.png" asp-append-version="true" alt="Logo Nông Sản: bông lúa vàng và lá xanh" width="64" height="64" />
+    }
+    <span class="brand-wordmark" id="@(isAdminBrand ? "admin-sidebar-title" : null)">NÔNG SẢN<small>@(isAdminBrand ? "KHU QUẢN TRỊ" : "CHO BỮA ĂN GIA ĐÌNH")</small></span>
+</span>

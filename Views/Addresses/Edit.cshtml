@@ -2,7 +2,7 @@
 @{ ViewData["Title"] = "Chỉnh sửa địa chỉ"; }
 @section Styles { <link rel="stylesheet" href="~/css/addresses.css" asp-append-version="true" /> }
 <section class="address-page address-form-page">
-    <a asp-action="Index" class="address-back">← Sổ địa chỉ</a>
+    <nav class="address-breadcrumb" aria-label="Đường dẫn"><a asp-controller="Profile" asp-action="Index">Tài khoản</a><span aria-hidden="true">/</span><a asp-action="Index">Sổ địa chỉ</a><span aria-hidden="true">/</span><span aria-current="page">Chỉnh sửa</span></nav>
     <p class="address-eyebrow">CẬP NHẬT NƠI NHẬN HÀNG</p><h1>Chỉnh sửa địa chỉ</h1><p class="address-intro">Các trường có dấu * là bắt buộc. Kiểm tra thông tin trước khi lưu.</p>
     <form asp-action="Edit" asp-route-id="@ViewContext.RouteData.Values["id"]" method="post" class="address-form-card">
         <input asp-for="VersionToken" type="hidden" />

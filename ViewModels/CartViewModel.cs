@@ -15,6 +15,7 @@ public sealed class CartLineViewModel
     public int Id { get; init; }
     public int ProductId { get; init; }
     public string Name { get; init; } = "";
+    public string? ImagePath { get; init; }
     public string Unit { get; init; } = "";
     public decimal UnitPrice { get; init; }
     public int Quantity { get; init; }

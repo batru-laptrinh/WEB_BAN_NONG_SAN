@@ -1,5 +1,19 @@
 # Tiến độ triển khai WEB_BAN_NONG_SAN
 
+## Tiếp tục giao diện nông sản — 06/11/2026
+
+Nhánh hiện tại `feature/agriculture-ui-redesign`, nền `feature/full-ecommerce` tại `fa35d2e6a6ba394d73aa228558ed8fb7f7cd327f`. Khi tiếp tục sau gián đoạn hạn mức, toàn bộ 52 file giao diện đang làm vẫn có trên đĩa và được đối chiếu SHA-256; không khôi phục giả, không viết lại từ đầu và không xóa thay đổi chưa Commit.
+
+- Đã thiết kế Home/Header/Footer, Catalog, tài khoản/hồ sơ/địa chỉ, Cart/Checkout/Orders, font Be Vietnam Pro tự phục vụ và ảnh WebP minh họa.
+- Luồng khách mua: Login quay về trang chi tiết sản phẩm bằng GET; chỉ tài khoản đã đăng nhập mới hiện form thêm giỏ. Controller Identity, COD, tồn kho, quyền và Migration không đổi.
+- Kết quả cuối sau tích hợp logo: Build Debug/Release thành công, 0 lỗi/cảnh báo; **299/299 đạt, 0 thất bại, 0 bỏ qua**, giữ đủ 297 bài trước logo và bổ sung hai bài kiểm tra tài nguyên gốc/favicon/sidebar Admin. Lượt Chromium mới đạt **258/258** (43 trang/trạng thái × 6 kích thước 320–1440px), đủ 258 kiểm tra logo và 62 liên kết GET nội bộ hợp lệ.
+- Kiểm chứng Chromium và danh sách file của nhánh giao diện được ghi riêng tại [UI_REDESIGN_REVIEW.md](UI_REDESIGN_REVIEW.md). Nguồn/giấy phép ảnh và font ở [UI_ASSETS.md](UI_ASSETS.md).
+- **Đã nhận và giải nén được `NONG_SAN.zip` do người dùng cung cấp.** PNG gốc được chép nguyên byte vào `wwwroot/images/logo-nong-san.png` (1024 × 1024, 569.019 byte, SHA-256 `99065c6479ac8e76e23c650b7627d50ea446b90aadff1f4c660824359fda2384`). Header/Footer/auth/Admin dùng đúng ảnh gốc; favicon PNG 32px và ICO sáu kích thước được dẫn xuất kỹ thuật, không thiết kế lại hoặc đổi màu logo. Đã xác minh HTTP, giải mã tài nguyên và ảnh Desktop/Mobile sau tích hợp.
+- Người dùng xác nhận InitialIdentity/AddCommerce đã áp dụng trên Windows trước nhiệm vụ UI. Đây là thông tin do người dùng cung cấp; Cloud không kiểm tra SQL Server đó. UI không thêm Migration hoặc yêu cầu áp dụng lại hai Migration này.
+- Giữ toàn bộ 54 file UI trước đó; danh sách cuối 57 file (33 chỉnh sửa, 24 mới) có trong báo cáo UI. Bản lưu cuối: `/workspace/artifacts/agriculture-ui-official-logo-review.zip`. Chưa Stage/Commit/Push/Merge, chưa sửa SQL Server Windows, không tạo thêm clone và không ghi đè `mau-nong-san.css`.
+
+## Hồ sơ nền thương mại điện tử đã hoàn thành ngày 05/11/2026
+
 Cập nhật 05/11/2026. Nhánh `feature/full-ecommerce`, nền `feature/admin-users` tại `fbbdfa62b8c5ab43159f4d667df3260e91661278`. Mã nguồn được lưu bằng Commit cục bộ sau kiểm thử; chưa Push hoặc Merge. Xem hash chính xác bằng `git log -1 --format='%H %s'`. Các nhánh nền giữ nguyên.
 
 ## Bốn trạng thái độc lập
